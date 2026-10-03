@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>iKOREX | About Us</title>
   <meta name="description"
-    content="Discover ikorex's mission, values, and the expert engineering and accounting team building next-generation operational automation in Melbourne.">
+    content="Meet iKOREX: a Melbourne team of automation engineers and Chartered Accountants, founded in 2024 to take manual work off operations teams.">
 
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -43,8 +43,8 @@
       </a>
 
       <!-- Nav Links -->
-      <nav class="nav-links">
-        <a href="index.html#hero">Home</a>
+      <nav class="nav-links" id="primaryNav" aria-label="Primary">
+        <a href="index.html">Home</a>
         <a href="services.html">Services</a>
         <a href="solutions.html">Solutions</a>
         <a href="about.html" class="active">About</a>
@@ -78,7 +78,7 @@
       </div>
 
       <!-- Mobile menu trigger -->
-      <button class="mobile-menu-btn" aria-label="Toggle menu" id="mobileMenuBtn">
+      <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav" id="mobileMenuBtn">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -88,153 +88,99 @@
     </div>
   </header>
 
-  <!-- Section 1: Intro Page Header -->
-  <section class="about-hero-section"
-    style="padding: 160px 20px 80px 20px; text-align: center; position: relative; overflow: hidden; background: radial-gradient(circle at 50% 10%, rgba(0, 136, 255, 0.04) 0%, transparent 60%);">
-    <div class="grid-overlay"></div>
-    <div class="section-container" style="position: relative; z-index: 2;">
-      <!-- Custom Badge -->
-      <div style="margin-bottom: 24px;">
-        <div class="custom-badge">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <defs>
-                <linearGradient id="logo-icon-grad-top-about" x1="3" y1="3" x2="21" y2="12"
-                  gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#00b4ff" />
-                  <stop offset="100%" stop-color="#0088ff" />
-                </linearGradient>
-                <linearGradient id="logo-icon-grad-bottom-about" x1="3" y1="21" x2="21" y2="12"
-                  gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#0055cc" />
-                  <stop offset="100%" stop-color="#0088ff" />
-                </linearGradient>
-              </defs>
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-about)" />
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-about)" />
-            </svg>
-          </span>
-          <span class="badge-text">About Us</span>
+  <!-- About Hero: story, trust signals and founders in the first screen -->
+  <section class="page-hero about-hero">
+    <div class="section-container about-hero-grid">
+      <div class="about-hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>Est. 2024 &middot; Melbourne, VIC</p>
+        <h1 class="page-title">Built by operators,<br><span class="text-gradient">for operators.</span></h1>
+        <p class="page-lead">iKOREX started with a simple observation: the businesses losing the most money to
+          inefficiency weren't lacking effort, they were lacking systems. We build automation that runs itself, so
+          operations teams get their time back.</p>
+
+        <ul class="trust-stats">
+          <li class="trust-stat">
+            <strong>20+ yrs</strong>
+            <span>process engineering leadership</span>
+          </li>
+          <li class="trust-stat">
+            <strong>3 CAs</strong>
+            <span>Chartered Accountants review every finance workflow</span>
+          </li>
+          <li class="trust-stat">
+            <strong>Australia-wide</strong>
+            <span>Melbourne team, clients across the country</span>
+          </li>
+        </ul>
+
+        <div class="hero-actions">
+          <a href="contact.html" class="btn btn-primary">Book a Discovery Call</a>
+          <a href="#team" class="btn btn-outline">Meet the team</a>
         </div>
       </div>
-      <h1 class="section-title"
-        style="margin: 0 auto 20px auto; font-size: 3.5rem; line-height: 1.15; max-width: 900px;">About ikorex</h1>
-      <p class="section-subtitle" style="max-width: 680px; margin: 0 auto; font-size: 1.125rem; line-height: 1.6;">
-        We eliminate operational friction, build robust automation architecture, and engineer systems that scale.
-      </p>
-    </div>
-  </section>
 
-  <!-- Section 2: Our Story (2-Column Layout) -->
-  <section class="story-section" style="padding: 80px 20px 100px 20px;">
-    <div class="section-container story-split-grid">
-      <!-- Left Column: Story text -->
-      <div>
-        <div class="custom-badge" style="margin-bottom: 20px;">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-about)" />
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-about)" />
-            </svg>
-          </span>
-          <span class="badge-text">Our Story</span>
+      <aside class="founders-panel" aria-label="Founders">
+        <div class="founders-panel-head">
+          <span class="panel-label">Founders</span>
+          <span class="panel-meta"><span class="live-dot"></span>Hands-on in every engagement</span>
         </div>
-        <h2 class="section-title" style="margin-bottom: 28px; text-align: left; font-size: 3rem; line-height: 1.2;">
-          Built by operators,<br><span class="highlight-blue">for operators.</span>
-        </h2>
-        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 20px;">
-          ikorex started with a simple observation: the businesses losing the most money to inefficiency weren't lacking
-          effort, they were lacking systems. Invoices chased by hand. Approvals stuck in email threads. Good people
-          spending their week on work a machine should be doing.
-        </p>
-        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 20px;">
-          Founded in 2024 by Yesudas Sebastian and Subin Peter, ikorex began by solving one problem well, bringing
-          robotic process automation and WhatsApp-based workflows to Order-to-Cash and Procure-to-Pay operations that
-          were bleeding time and money to manual processing. That focus earned trust across industries and it's what
-          still shapes how we build today.
-        </p>
-        <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 0;">
-          We're now based in Melbourne, working with businesses across Australia to turn operational complexity into
-          automation that runs itself. The mission hasn't changed since day one: fewer manual hours, fewer errors, and
-          operations teams who get their time back.
-        </p>
-      </div>
-
-      <!-- Right Column: Founders card widget -->
-      <div class="founders-widget-card">
-        <div style="margin-bottom: 20px;">
-          <span class="status-badge success"
-            style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 50px; background-color: var(--accent-blue-glow); color: var(--accent-orange); text-transform: uppercase;">
-            Executive Leadership
-          </span>
-        </div>
-        <h3 class="founders-widget-title">Founders</h3>
         <div class="founders-grid">
-          <!-- Founder 1 -->
           <div class="founder-card">
             <div class="founder-img-wrapper">
               <img src="assets/images/Team/yesudas_sebastian.jpg" alt="Yesudas Sebastian" class="founder-img">
             </div>
             <div class="founder-card-info">
               <div class="founder-card-name">Yesudas Sebastian</div>
-              <div class="founder-card-role">Co-Founder & CEO</div>
-              <div class="founder-card-meta">20+ Yrs Process Engineering</div>
+              <div class="founder-card-role">Co-Founder &amp; CEO</div>
+              <div class="founder-card-meta">B.Tech in Engineering. 20+ years of global experience in process
+                improvement.</div>
             </div>
           </div>
-          <!-- Founder 2 -->
           <div class="founder-card">
             <div class="founder-img-wrapper">
               <img src="assets/images/Team/subin_peter.png" alt="Subin Peter" class="founder-img">
             </div>
             <div class="founder-card-info">
               <div class="founder-card-name">Subin Peter</div>
-              <div class="founder-card-role">Co-Founder & COO</div>
-              <div class="founder-card-meta">Enterprise Workflow Architect</div>
+              <div class="founder-card-role">Co-Founder &amp; COO</div>
+              <div class="founder-card-meta">Leads operations and client delivery. Enterprise workflow architect.
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   </section>
 
-  <!-- Section 3: Mission & Values -->
-  <section class="values-section"
-    style="padding: 100px 20px; background: radial-gradient(circle at 50% 50%, rgba(0, 136, 255, 0.02) 0%, transparent 70%); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-    <div class="section-container">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div class="custom-badge">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-about)" />
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-about)" />
-            </svg>
-          </span>
-          <span class="badge-text">What Drives Us</span>
-        </div>
+  <!-- Story & Values -->
+  <section class="about-story">
+    <div class="section-container about-story-grid">
+      <div class="about-story-copy">
+        <h2 class="section-title">One problem solved well, then the next.</h2>
+        <p>Founded in 2024 by Yesudas Sebastian and Subin Peter, iKOREX began by bringing robotic process automation
+          and WhatsApp-based workflows to Order-to-Cash and Procure-to-Pay operations that were bleeding time and money
+          to manual processing.</p>
+        <p>That focus earned trust across industries, and it still shapes how we build today. Invoices chased by hand,
+          approvals stuck in email threads, good people spending their week on work a machine should be doing: that is
+          the work we take off your team's plate.</p>
       </div>
-      <h2 class="section-title"
-        style="text-align: center; margin: 0 auto 56px auto; font-size: 3rem; line-height: 1.2;">
-        Mission & Values</h2>
 
-      <div class="values-grid">
-        <!-- Value 1 -->
-        <div class="premium-value-card">
+      <div class="values-list">
+        <div class="value-row">
           <div class="value-icon-box">
-            <!-- Shield icon -->
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
           </div>
-          <h3 class="value-card-title">Built for Reliability</h3>
-          <p class="value-card-desc">We design automation that runs without babysitting. Accurate, auditable, and
-            dependable enough for the processes your business can't afford to get wrong.</p>
+          <div>
+            <h3 class="value-card-title">Built for reliability</h3>
+            <p class="value-card-desc">Automation that runs without babysitting: accurate, auditable, and dependable
+              for the processes you can't afford to get wrong.</p>
+          </div>
         </div>
-
-        <!-- Value 2 -->
-        <div class="premium-value-card">
+        <div class="value-row">
           <div class="value-icon-box">
-            <!-- People icon -->
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -243,15 +189,14 @@
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
           </div>
-          <h3 class="value-card-title">Partners, Not Vendors</h3>
-          <p class="value-card-desc">We stay close to how our clients actually operate. Every engagement starts with
-            understanding the friction, not selling a template.</p>
+          <div>
+            <h3 class="value-card-title">Partners, not vendors</h3>
+            <p class="value-card-desc">Every engagement starts with understanding how you actually operate, not with
+              selling a template.</p>
+          </div>
         </div>
-
-        <!-- Value 3 -->
-        <div class="premium-value-card">
+        <div class="value-row">
           <div class="value-icon-box">
-            <!-- Layers icon -->
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -259,112 +204,60 @@
               <polyline points="2 12 12 17 22 12"></polyline>
             </svg>
           </div>
-          <h3 class="value-card-title">Engineered to Scale</h3>
-          <p class="value-card-desc">What we build for one process should extend cleanly to the next, so automation
-            compounds instead of becoming another system to maintain.</p>
+          <div>
+            <h3 class="value-card-title">Engineered to scale</h3>
+            <p class="value-card-desc">What we build for one process extends cleanly to the next, so automation
+              compounds instead of becoming another system to maintain.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 4: Team Section -->
-  <section class="team-section" style="padding: 100px 20px 120px 20px;">
+  <!-- Team -->
+  <section class="about-team" id="team">
     <div class="section-container">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div class="custom-badge">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-about)" />
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-about)" />
-            </svg>
-          </span>
-          <span class="badge-text">Our People</span>
-        </div>
+      <div class="section-head">
+        <h2 class="section-title">The specialists behind the automation</h2>
+        <p class="section-subtitle">Automation engineers and Chartered Accountants who design, build, and review every
+          workflow we deliver.</p>
       </div>
-      <h2 class="section-title"
-        style="text-align: center; margin: 0 auto 56px auto; font-size: 3rem; line-height: 1.2;">The
-        Team Behind the Automation</h2>
 
-      <div class="team-section-grid">
-        <!-- Team Profile 1 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner" style="overflow: hidden; padding: 0;">
-              <img src="assets/images/Team/yesudas_sebastian.jpg" alt="Yesudas Sebastian"
-                style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar team-avatar-initials" aria-hidden="true">JJ</div>
+          <div class="team-card-body">
+            <h3 class="team-profile-name">Justin John</h3>
+            <div class="team-profile-role">Head of RPA Engineering</div>
+            <p class="team-profile-bio">Architects robust automation systems and cognitive bot networks.</p>
           </div>
-          <h3 class="team-profile-name">Yesudas Sebastian</h3>
-          <div class="team-profile-role">Co-Founder & CEO</div>
-          <p class="team-profile-bio">Bachelor Of Technology in Engineering. 20+ yrs of global industry experience in
-            process improvement.</p>
         </div>
-
-        <!-- Team Profile 2 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner" style="overflow: hidden; padding: 0;">
-              <img src="assets/images/Team/subin_peter.png" alt="Subin Peter"
-                style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
+        <div class="team-card">
+          <img class="team-avatar" src="assets/images/Team/team_2.jpg" alt="Allen Jose" loading="lazy">
+          <div class="team-card-body">
+            <h3 class="team-profile-name">Allen Jose</h3>
+            <div class="team-profile-role">Process Automation Lead <span class="credential">CA</span></div>
+            <p class="team-profile-bio">Audit and process analysis specialist who designs AI-driven automation to
+              streamline processes and strengthen financial controls.</p>
           </div>
-          <h3 class="team-profile-name">Subin Peter</h3>
-          <div class="team-profile-role">Co-Founder & COO</div>
-          <p class="team-profile-bio">Leading operations and client delivery with deep expertise in enterprise workflow
-            design.</p>
         </div>
-
-        <!-- Team Profile 3 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner">JJ</div>
+        <div class="team-card">
+          <img class="team-avatar" src="assets/images/Team/team_3.jpg" alt="Rueben Jose" loading="lazy">
+          <div class="team-card-body">
+            <h3 class="team-profile-name">Rueben Jose</h3>
+            <div class="team-profile-role">Financial Automation Specialist <span class="credential">CA</span></div>
+            <p class="team-profile-bio">8+ years in financial audit and planning across technology, manufacturing,
+              banking, agriculture, and healthcare.</p>
           </div>
-          <h3 class="team-profile-name">Justin John</h3>
-          <div class="team-profile-role">Head of RPA Engineering</div>
-          <p class="team-profile-bio">Architecting robust automation systems and cognitive bot networks.</p>
         </div>
-
-        <!-- Team Profile 4 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner" style="overflow: hidden; padding: 0;">
-              <img src="assets/images/Team/team_2.jpg" alt="Allen Jose"
-                style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
+        <div class="team-card">
+          <img class="team-avatar" src="assets/images/Team/team_1.jpg" alt="Alen T Jose" loading="lazy">
+          <div class="team-card-body">
+            <h3 class="team-profile-name">Alen T Jose</h3>
+            <div class="team-profile-role">Business Automation Specialist <span class="credential">CA</span></div>
+            <p class="team-profile-bio">6+ years in bookkeeping, audit, and business consultancy across finance,
+              medical, hospitality, retail, and shipbuilding.</p>
           </div>
-          <h3 class="team-profile-name">Allen Jose</h3>
-          <div class="team-profile-role">Process Automation Lead | Chartered Accountant</div>
-          <p class="team-profile-bio">Chartered Accountant with expertise in audit, process analysis, and identifying
-            operational gaps. Specialised in designing and implementing AI-driven automation solutions to streamline
-            processes, improve efficiency, and strengthen financial controls.</p>
-        </div>
-
-        <!-- Team Profile 5 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner" style="overflow: hidden; padding: 0;">
-              <img src="assets/images/Team/team_3.jpg" alt="Rueben Jose"
-                style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-          </div>
-          <h3 class="team-profile-name">Rueben Jose</h3>
-          <div class="team-profile-role">Financial Automation Specialist |Chartered Accountant</div>
-          <p class="team-profile-bio">8+ yrs of experience in financial audit and planning across technology,
-            manufacturing, banking, agriculture, and healthcare.</p>
-        </div>
-
-        <!-- Team Profile 6 -->
-        <div class="premium-team-card">
-          <div class="avatar-ring-wrapper">
-            <div class="avatar-circle-inner" style="overflow: hidden; padding: 0;">
-              <img src="assets/images/Team/team_1.jpg" alt="Alen T Jose"
-                style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-          </div>
-          <h3 class="team-profile-name">Alen T Jose</h3>
-          <div class="team-profile-role">Business Automation Specialist | Chartered Accountant</div>
-          <p class="team-profile-bio">6+ yrs of experience in bookkeeping, audit, and business consultancy across
-            finance, medical, hospitality, retail, and shipbuilding.</p>
         </div>
       </div>
     </div>
@@ -438,15 +331,16 @@
       </div>
       <div class="footer-links">
         <div class="link-group">
-          <h4>Solutions</h4>
-          <a href="solutions.html">Solutions</a>
+          <h4>Explore</h4>
           <a href="services.html">Services</a>
+          <a href="solutions.html">Solutions</a>
+          <a href="index.html#blog">Insights</a>
           <a href="about.html">About Us</a>
-          <a href="contact.html">Support</a>
         </div>
         <div class="link-group">
           <h4>Company</h4>
-          <a href="contact.html">Contact Team</a>
+          <a href="contact.html">Book a Discovery Call</a>
+          <a href="contact.html">Contact &amp; Support</a>
           <a href="privacy.html">Privacy Policy</a>
         </div>
         <div class="link-group">
@@ -477,7 +371,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=2"></script>
+  <script src="main.js?v=3"></script>
 </body>
 
 </html>

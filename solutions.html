@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -38,8 +38,8 @@
       </a>
       
       <!-- Nav Links -->
-      <nav class="nav-links">
-        <a href="index.html#hero">Home</a>
+      <nav class="nav-links" id="primaryNav" aria-label="Primary">
+        <a href="index.html">Home</a>
         <a href="services.html">Services</a>
         <a href="solutions.html" class="active">Solutions</a>
         <a href="about.html">About</a>
@@ -71,7 +71,7 @@
       </div>
       
       <!-- Mobile menu trigger -->
-      <button class="mobile-menu-btn" aria-label="Toggle menu" id="mobileMenuBtn">
+      <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav" id="mobileMenuBtn">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -82,49 +82,29 @@
   </header>
 
   <!-- Main Solutions Content -->
-  <section class="solutions-section" id="solutions" style="padding: 140px 20px 80px 20px;">
-    <!-- Grid pattern overlay -->
-    <div class="grid-overlay"></div>
-    
-    <div class="section-container" style="position: relative; z-index: 2;">
-      
-      <!-- Eyebrow Badge with proper inline SVG definitions -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div class="custom-badge">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <defs>
-                <linearGradient id="logo-icon-grad-top-sol" x1="3" y1="3" x2="21" y2="12" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#00b4ff"/>
-                  <stop offset="100%" stop-color="#0088ff"/>
-                </linearGradient>
-                <linearGradient id="logo-icon-grad-bottom-sol" x1="3" y1="21" x2="21" y2="12" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#0055cc"/>
-                  <stop offset="100%" stop-color="#0088ff"/>
-                </linearGradient>
-              </defs>
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-sol)"/>
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-sol)"/>
-            </svg>
-          </span>
-          <span class="badge-text">System Matrices</span>
-        </div>
+  <section class="solutions-section page-hero" id="solutions">
+    <div class="section-container">
+      <div class="section-head center">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>By business process</p>
+        <h1 class="page-title">Fix the processes that <span class="text-gradient">cost you the most.</span></h1>
+        <p class="page-lead">Four high-risk areas where manual work leaks time and money, each transformed with
+          automation and built-in verification.</p>
       </div>
-      
-      <h1 class="section-title" style="text-align: center; margin: 0 auto 20px auto; font-size: 3rem; line-height: 1.15; max-width: 900px;">
-        Structural fixes for<br>your highest transaction risks.
-      </h1>
-      <p class="section-subtitle" style="text-align: center; max-width: 680px; margin: 0 auto 64px auto; font-size: 1.125rem; line-height: 1.6;">
-        Four mission-critical operational spaces. Transformed with high automation and real-time verification layers.
-      </p>
-      
+
+      <nav class="segmented-nav" aria-label="Jump to solution">
+        <a href="#o2c">Order to Cash</a>
+        <a href="#p2p">Procure to Pay</a>
+        <a href="#loss-prevention">Loss Prevention</a>
+        <a href="#finance">Finance &amp; Accounting</a>
+      </nav>
+
       <div class="solutions-grid">
         <!-- Solution Card 1 -->
-        <div class="solution-horizontal-card">
+        <div class="solution-horizontal-card" id="o2c">
           <div class="solution-left">
             <span class="solution-pill">Order to Cash - O2C</span>
-            <h2 class="solution-card-title">Accelerate cash velocity. <span class="highlight-blue">Maximize liquid control.</span></h2>
-            <p class="solution-card-desc">Eliminate transaction friction starting at order processing down through bank collection loops to protect working capital balances, reduce DSO timelines, and settle billing disputes autonomously.</p>
+            <h2 class="solution-card-title">Get paid faster. <span class="highlight-blue">Keep cash flowing.</span></h2>
+            <p class="solution-card-desc">From order processing to bank collection, we remove the manual steps that slow cash down, cutting debtor days and resolving billing disputes automatically.</p>
           </div>
           <div class="solution-right">
             <ul class="solution-checklist">
@@ -134,7 +114,7 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <span class="solution-check-text">Automated billing verification & secure electronic delivery loops</span>
+                <span class="solution-check-text">Automated billing checks and secure electronic invoice delivery</span>
               </li>
               <li class="solution-check-item">
                 <div class="solution-check-icon-wrapper">
@@ -150,18 +130,18 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <span class="solution-check-text">Automated reminder systems and escalation routing protocols</span>
+                <span class="solution-check-text">Automated payment reminders and escalation routing</span>
               </li>
             </ul>
           </div>
         </div>
 
         <!-- Solution Card 2 -->
-        <div class="solution-horizontal-card">
+        <div class="solution-horizontal-card" id="p2p">
           <div class="solution-left">
             <span class="solution-pill">Procure to Pay - P2P</span>
-            <h2 class="solution-card-title">Govern complex spend stacks. <span class="highlight-blue">Enforce vendor metrics.</span></h2>
-            <p class="solution-card-desc">Manual payment steps lead to validation errors, compliance risks, and supplier strain. We build hands-free matching pipelines to give you real-time visibility and absolute budget control.</p>
+            <h2 class="solution-card-title">Control every dollar of spend. <span class="highlight-blue">Pay suppliers right, on time.</span></h2>
+            <p class="solution-card-desc">Manual payment steps cause validation errors, compliance risk, and strained supplier relationships. We build hands-free matching that gives you real-time visibility and full budget control.</p>
           </div>
           <div class="solution-right">
             <ul class="solution-checklist">
@@ -171,7 +151,7 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <span class="solution-check-text">Purchase requisition and PO approval distribution setups</span>
+                <span class="solution-check-text">Purchase requisition and PO approval workflows</span>
               </li>
               <li class="solution-check-item">
                 <div class="solution-check-icon-wrapper">
@@ -194,11 +174,11 @@
         </div>
 
         <!-- Solution Card 3 -->
-        <div class="solution-horizontal-card">
+        <div class="solution-horizontal-card" id="loss-prevention">
           <div class="solution-left">
             <span class="solution-pill">Loss Prevention - AI Vision</span>
-            <h2 class="solution-card-title">Protect physical assets. <span class="highlight-blue">Detect real-time gesture vectors.</span></h2>
-            <p class="solution-card-desc">Physical assets require active protection loops. Using advanced AI-driven camera software, we turn standard surveillance systems into proactive real-time defenses against inventory shrinkage.</p>
+            <h2 class="solution-card-title">Protect your stock. <span class="highlight-blue">Catch theft as it happens.</span></h2>
+            <p class="solution-card-desc">AI camera software turns the surveillance system you already have into a real-time defence against inventory shrinkage.</p>
           </div>
           <div class="solution-right">
             <ul class="solution-checklist">
@@ -231,11 +211,11 @@
         </div>
 
         <!-- Solution Card 4 -->
-        <div class="solution-horizontal-card">
+        <div class="solution-horizontal-card" id="finance">
           <div class="solution-left">
             <span class="solution-pill">Intelligent Finance & Accounting</span>
-            <h2 class="solution-card-title">Compress month-end closings. <span class="highlight-blue">Publish verified data.</span></h2>
-            <p class="solution-card-desc">Eliminate manual ledger tracking. We route standard bookkeeping steps into autonomous verification pipelines to keep your compliance logs clear and accurate for audit reviews.</p>
+            <h2 class="solution-card-title">Close the month in days. <span class="highlight-blue">Report numbers you can trust.</span></h2>
+            <p class="solution-card-desc">No more manual ledger tracking. Routine bookkeeping runs through automated verification, so your records stay accurate and audit-ready.</p>
           </div>
           <div class="solution-right">
             <ul class="solution-checklist">
@@ -253,7 +233,7 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <span class="solution-check-text">AASB and IFRS compliance mapping with instant ledger validation loops</span>
+                <span class="solution-check-text">AASB and IFRS compliance mapping with instant ledger validation</span>
               </li>
               <li class="solution-check-item">
                 <div class="solution-check-icon-wrapper">
@@ -261,7 +241,7 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <span class="solution-check-text">Real-time profit & loss, balance sheet, and live cash visibility generation</span>
+                <span class="solution-check-text">Real-time profit &amp; loss, balance sheet, and cash visibility</span>
               </li>
             </ul>
           </div>
@@ -280,7 +260,7 @@
           <p class="cta-description">Let's build custom workflows that eliminate manual overhead, optimize accuracy, and save hours of work. Schedule a discovery call with our experts today.</p>
           <div class="cta-actions">
             <a href="contact.html" class="btn btn-primary">Book a Discovery Call</a>
-            <a href="solutions.html" class="btn btn-secondary">Explore Use Cases</a>
+            <a href="services.html" class="btn btn-secondary">Explore Services</a>
           </div>
         </div>
       </div>
@@ -319,15 +299,16 @@
       </div>
       <div class="footer-links">
         <div class="link-group">
-          <h4>Solutions</h4>
-          <a href="solutions.html">Solutions</a>
+          <h4>Explore</h4>
           <a href="services.html">Services</a>
+          <a href="solutions.html">Solutions</a>
+          <a href="index.html#blog">Insights</a>
           <a href="about.html">About Us</a>
-          <a href="contact.html">Support</a>
         </div>
         <div class="link-group">
           <h4>Company</h4>
-          <a href="contact.html">Contact Team</a>
+          <a href="contact.html">Book a Discovery Call</a>
+          <a href="contact.html">Contact &amp; Support</a>
           <a href="privacy.html">Privacy Policy</a>
         </div>
         <div class="link-group">
@@ -355,6 +336,6 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=2"></script>
+  <script src="main.js?v=3"></script>
 </body>
 </html>

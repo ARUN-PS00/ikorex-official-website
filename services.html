@@ -16,7 +16,7 @@
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -43,8 +43,8 @@
       </a>
 
       <!-- Nav Links -->
-      <nav class="nav-links">
-        <a href="index.html#hero">Home</a>
+      <nav class="nav-links" id="primaryNav" aria-label="Primary">
+        <a href="index.html">Home</a>
         <a href="services.html" class="active">Services</a>
         <a href="solutions.html">Solutions</a>
         <a href="about.html">About</a>
@@ -78,7 +78,7 @@
       </div>
 
       <!-- Mobile menu trigger -->
-      <button class="mobile-menu-btn" aria-label="Toggle menu" id="mobileMenuBtn">
+      <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav" id="mobileMenuBtn">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -89,46 +89,14 @@
   </header>
 
   <!-- Main Unified Services Page Content -->
-  <section class="services-section" id="engines" style="padding: 140px 20px 80px 20px;">
-    <!-- Grid pattern overlay -->
-    <div class="grid-overlay"></div>
-
-    <div class="section-container" style="position: relative; z-index: 2;">
-
-      <!-- Clean Eyebrow Badge with proper inline SVG definitions -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div class="custom-badge">
-          <span class="badge-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" class="badge-svg">
-              <defs>
-                <linearGradient id="logo-icon-grad-top-service" x1="3" y1="3" x2="21" y2="12"
-                  gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#00b4ff" />
-                  <stop offset="100%" stop-color="#0088ff" />
-                </linearGradient>
-                <linearGradient id="logo-icon-grad-bottom-service" x1="3" y1="21" x2="21" y2="12"
-                  gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#0055cc" />
-                  <stop offset="100%" stop-color="#0088ff" />
-                </linearGradient>
-              </defs>
-              <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="url(#logo-icon-grad-top-service)" />
-              <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom-service)" />
-            </svg>
-          </span>
-          <span class="badge-text">Functional Pillars</span>
-        </div>
+  <section class="services-section page-hero" id="engines">
+    <div class="section-container">
+      <div class="section-head center">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>What we deliver</p>
+        <h1 class="page-title">Three services. <span class="text-gradient">One accountable team.</span></h1>
+        <p class="page-lead">Workflow automation, AI vision, and finance operations, designed around the systems you
+          already run and supported long after go-live.</p>
       </div>
-
-      <h1 class="section-title"
-        style="text-align: center; margin: 0 auto 20px auto; font-size: 3rem; line-height: 1.15; max-width: 900px;">
-        Three core engines.<br>Built for absolute operational precision.
-      </h1>
-      <p class="section-subtitle"
-        style="text-align: center; max-width: 680px; margin: 0 auto 64px auto; font-size: 1.125rem; line-height: 1.6;">
-        From modern software robots to real-time artificial vision models &mdash; we deploy high-performance operational
-        systems.
-      </p>
 
       <div class="engines-grid">
         <!-- Engine Card 1 -->
@@ -182,9 +150,9 @@
               </div>
             </div>
             <h3 class="engine-card-title">RPA &amp; Workflow Re-engineering</h3>
-            <p class="engine-card-desc">We eliminate repetitive manual steps by wrapping software bots around your
-              legacy apps, maximizing transaction flow speeds. We integrate operations audits directly into the
-              automation layer to remove process waste before writing code.</p>
+            <p class="engine-card-desc">Software bots take over the repetitive steps in your existing apps, so
+              transactions move in seconds instead of hours. We audit each process first and remove the waste before
+              we automate it.</p>
 
             <hr class="engine-divider">
 
@@ -213,18 +181,18 @@
             <div class="engine-header-row">
               <span class="engine-number">02</span>
               <div class="engine-icon-wrapper">
-                <!-- Clock icon -->
+                <!-- Eye icon -->
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
                   stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
                 </svg>
               </div>
             </div>
             <h3 class="engine-card-title">AI Camera Security Monitoring</h3>
-            <p class="engine-card-desc">Using state-of-the-art computer vision tech, we integrate with your current
-              on-site camera networks to track behavior models, contextually isolating real-time concealment actions to
-              shut down retail loss events fast.</p>
+            <p class="engine-card-desc">Computer vision that works with the cameras you already have. It spots
+              concealment behaviour in real time and alerts your floor team with a short video clip, so losses are
+              stopped as they happen.</p>
 
             <hr class="engine-divider">
 
@@ -263,9 +231,8 @@
               </div>
             </div>
             <h3 class="engine-card-title">Accounting, Bookkeeping &amp; Financial Reporting</h3>
-            <p class="engine-card-desc">Reliable day-to-day bookkeeping combined with advanced financial reporting
-              models. We maintain transaction files and translate raw financial streams into verified insight packages
-              matching local Australian compliance standards.</p>
+            <p class="engine-card-desc">Reliable day-to-day bookkeeping and reporting, run by Chartered Accountants
+              and backed by automation. Your numbers stay current, reconciled, and compliant with Australian standards.</p>
 
             <hr class="engine-divider">
 
@@ -277,6 +244,39 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- How We Work -->
+  <section class="process-section" id="process">
+    <div class="section-container">
+      <div class="section-head center">
+        <h2 class="section-title">How an engagement runs</h2>
+        <p class="section-subtitle">A structured path from first call to measurable results, with no disruption to
+          your team.</p>
+      </div>
+      <ol class="process-track">
+        <li class="process-step">
+          <span class="process-num">01</span>
+          <h3>Free process audit</h3>
+          <p>We map how work really flows today and find where automation pays back fastest.</p>
+        </li>
+        <li class="process-step">
+          <span class="process-num">02</span>
+          <h3>Design around your stack</h3>
+          <p>Workflows are built on the tools you already use, with no forced platform switch.</p>
+        </li>
+        <li class="process-step">
+          <span class="process-num">03</span>
+          <h3>Test, then deploy</h3>
+          <p>Every workflow is validated for accuracy before it goes live. Accuracy comes before speed.</p>
+        </li>
+        <li class="process-step">
+          <span class="process-num">04</span>
+          <h3>Monitor &amp; improve</h3>
+          <p>We keep monitoring and optimising as your business changes. Support doesn't end at go-live.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -348,15 +348,16 @@
       </div>
       <div class="footer-links">
         <div class="link-group">
-          <h4>Solutions</h4>
-          <a href="solutions.html">Solutions</a>
+          <h4>Explore</h4>
           <a href="services.html">Services</a>
+          <a href="solutions.html">Solutions</a>
+          <a href="index.html#blog">Insights</a>
           <a href="about.html">About Us</a>
-          <a href="contact.html">Support</a>
         </div>
         <div class="link-group">
           <h4>Company</h4>
-          <a href="contact.html">Contact Team</a>
+          <a href="contact.html">Book a Discovery Call</a>
+          <a href="contact.html">Contact &amp; Support</a>
           <a href="privacy.html">Privacy Policy</a>
         </div>
         <div class="link-group">
@@ -387,7 +388,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=2"></script>
+  <script src="main.js?v=3"></script>
 </body>
 
 </html>

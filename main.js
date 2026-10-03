@@ -1,7 +1,30 @@
-// --- Preloader Hide Logic (Home Page Only) ---
+// --- Preloader (Home Page Only, once per browser session) ---
+// The intro plays on the first visit of a session. Returning to the home page
+// (back button, nav links, reloads) skips it: an inline <head> script adds
+// .intro-seen to <html> before first paint so the overlay never flashes.
+window.ikxIntroActive = false;
 (function() {
   const preloader = document.getElementById('preloader');
   if (!preloader) return;
+
+  const INTRO_KEY = 'ikx-intro-seen';
+  let seen = document.documentElement.classList.contains('intro-seen');
+  try {
+    seen = seen || sessionStorage.getItem(INTRO_KEY) === '1';
+    sessionStorage.setItem(INTRO_KEY, '1');
+  } catch (e) { /* storage blocked: fall back to showing the intro */ }
+
+  if (seen) {
+    preloader.remove();
+    return;
+  }
+
+  window.ikxIntroActive = true;
+
+  // Restored from the back/forward cache: never replay the overlay
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted && preloader.isConnected) preloader.remove();
+  });
 
   const progressLine = preloader.querySelector('.loader-progress-line');
   const progressSteps = [15, 35, 55, 75, 90, 100];
@@ -9,7 +32,6 @@
   let pageLoaded = false;
   let finishTriggered = false;
 
-  // Set initial progress style
   if (progressLine) {
     progressLine.style.animation = 'none';
     progressLine.style.left = '-100%';
@@ -19,57 +41,42 @@
   function triggerFadeOut() {
     if (finishTriggered) return;
     finishTriggered = true;
-    
-    // Update to 100% progress
+
     if (progressLine) progressLine.style.left = '0%';
 
     setTimeout(() => {
       preloader.classList.add('fade-out');
+      window.ikxIntroActive = false;
+      document.dispatchEvent(new Event('ikx:intro-done'));
       setTimeout(() => preloader.remove(), 900);
-    }, 400); // 400ms hold time at 100% before fading out
+    }, 300);
   }
 
   function runLoader() {
     if (currentStep >= progressSteps.length - 1) {
-      // If the page is loaded, finish up. If not, wait for it at 90%
-      if (pageLoaded) {
-        triggerFadeOut();
-      }
+      if (pageLoaded) triggerFadeOut();
       return;
     }
-
-    const progress = progressSteps[currentStep];
-    
-    // Update progress line (translate 0-100% to -100% to 0% left value)
     if (progressLine) {
-      progressLine.style.left = `${-100 + progress}%`;
+      progressLine.style.left = `${-100 + progressSteps[currentStep]}%`;
     }
-
     currentStep++;
-
-    // Schedule next step with a slight random variation (200ms to 450ms)
-    const nextDelay = 200 + Math.random() * 250;
-    setTimeout(runLoader, nextDelay);
+    setTimeout(runLoader, 160 + Math.random() * 180);
   }
 
-  // Set pageLoaded when window load event fires
   if (document.readyState === 'complete') {
     pageLoaded = true;
   } else {
     window.addEventListener('load', () => {
       pageLoaded = true;
-      // If we already reached 90% (step index 4), trigger the finish
-      if (currentStep >= progressSteps.length - 1) {
-        triggerFadeOut();
-      }
+      if (currentStep >= progressSteps.length - 1) triggerFadeOut();
     });
   }
 
-  // Start loader sequence
-  setTimeout(runLoader, 150);
+  setTimeout(runLoader, 120);
 
-  // Fail-safe: force hide preloader after 4.5 seconds regardless of state
-  setTimeout(triggerFadeOut, 4500);
+  // Fail-safe: never hold the visitor longer than 3.5 seconds
+  setTimeout(triggerFadeOut, 3500);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -105,24 +112,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const navLinks = document.querySelector('.nav-links');
 
+  function setMenu(open) {
+    if (!mobileMenuBtn || !navLinks) return;
+    navLinks.classList.toggle('active', open);
+    mobileMenuBtn.setAttribute('aria-expanded', String(open));
+    mobileMenuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+
   if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setMenu(!navLinks.classList.contains('active'));
+    });
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('active') && !navLinks.contains(e.target)) setMenu(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setMenu(false);
     });
   }
 
-  // --- 2. Spotlight Card Glow Effect ---
-  // Tracks mouse movement on cards to position a glowing gradient hover highlight
-  const diagnosisCards = document.querySelectorAll('.diagnosis-card');
-  diagnosisCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    });
-  });
+  // --- 2. Liquid Glass Light Tracking ---
+  // Moves the specular highlight on glass panels to follow the pointer
+  const GLASS_SELECTOR = '.glass, .diagnosis-card, .comparison-card, .risk-card, .capability-card, ' +
+    '.stat-card-compact, .cta-card, .engine-card, .solution-horizontal-card, .premium-value-card, ' +
+    '.founders-panel, .contact-info-card, .contact-form-card, .blog-card, .trust-bar, .value-row, ' +
+    '.team-card, .process-step, .sidebar-widget, .article-bento-item, .privacy-contact-card';
+
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.addEventListener('pointermove', (e) => {
+      const panel = e.target.closest && e.target.closest(GLASS_SELECTOR);
+      if (!panel) return;
+      const rect = panel.getBoundingClientRect();
+      panel.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      panel.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    }, { passive: true });
+  }
 
   // --- 3. Interactive Automation Console Simulation ---
   const consoleTimer = document.getElementById('consoleTimer');
@@ -323,17 +348,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  window.addEventListener('scroll', updateActiveLink);
+  let spyTicking = false;
+  window.addEventListener('scroll', () => {
+    if (spyTicking) return;
+    spyTicking = true;
+    requestAnimationFrame(() => {
+      updateActiveLink();
+      spyTicking = false;
+    });
+  }, { passive: true });
   updateActiveLink();
 
   // Close mobile menu when any navigation link is clicked
-  if (navLinks) {
-    navLinksItems.forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-      });
-    });
-  }
+  navLinksItems.forEach(link => {
+    link.addEventListener('click', () => setMenu(false));
+  });
 
   // --- Service Card Video Play / Pause Controls ---
   const mediaContainers = document.querySelectorAll('.engine-card-media');
@@ -450,4 +479,93 @@ document.addEventListener('DOMContentLoaded', () => {
       observer.observe(video);
     }
   });
+
+  // --- Navbar: condense into a tighter glass pill once the page scrolls ---
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    const syncNavbar = () => navbar.classList.toggle('is-scrolled', window.scrollY > 24);
+    window.addEventListener('scroll', syncNavbar, { passive: true });
+    syncNavbar();
+  }
+
+  // --- Solutions page: highlight the segmented nav for the section in view ---
+  const segLinks = document.querySelectorAll('.segmented-nav a[href^="#"]');
+  if (segLinks.length && 'IntersectionObserver' in window) {
+    const segObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        segLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${entry.target.id}`));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    segLinks.forEach(a => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) segObserver.observe(target);
+    });
+  }
+
+  // --- Scroll Reveal ---
+  // Panels and headings rise into place as they enter the viewport, staggered
+  // within each grid. Skipped entirely for reduced-motion users and old browsers.
+  const REVEAL_SELECTOR = [
+    '.hero-content > *', '.hero-visual', '.trust-bar',
+    '.section-head > *', '.section-title', '.section-subtitle', '.custom-badge',
+    '.page-title', '.page-lead', '.eyebrow', '.trust-stat', '.about-hero-copy .hero-actions', '.founders-panel',
+    '.diagnosis-card', '.comparison-card', '.comparison-cta', '.risk-card', '.capability-card', '.stats-bento-card',
+    '.blog-card', '.cta-card', '.engine-card', '.solution-horizontal-card', '.segmented-nav',
+    '.value-row', '.team-card', '.process-step', '.about-story-copy > p',
+    '.contact-info-card', '.contact-form-card', '.map-container', '.footnote'
+  ].join(', ');
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initReveal() {
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+    const all = new Set(Array.from(document.querySelectorAll(REVEAL_SELECTOR))
+      .filter(el => !el.closest('#preloader, .navbar, .footer')));
+    // Animate only the outermost match so nested items don't double-animate
+    const targets = Array.from(all).filter(el => {
+      for (let p = el.parentElement; p; p = p.parentElement) if (all.has(p)) return false;
+      return true;
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        revealObserver.unobserve(el);
+        el.classList.add('is-visible');
+        // Hand transitions back to the component once the entrance is done
+        const cleanup = () => {
+          el.classList.remove('reveal', 'is-visible');
+          el.style.removeProperty('--reveal-delay');
+        };
+        el.addEventListener('transitionend', function onEnd(ev) {
+          if (ev.target !== el || ev.propertyName !== 'opacity') return;
+          el.removeEventListener('transitionend', onEnd);
+          cleanup();
+        });
+        setTimeout(cleanup, 2200);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    // Hide targets instantly (no fade-out), then enable the entrance transition
+    targets.forEach(el => {
+      const siblings = Array.from(el.parentElement.children).filter(c => all.has(c));
+      const index = Math.max(0, siblings.indexOf(el));
+      el.style.setProperty('--reveal-delay', `${Math.min(index, 6) * 80}ms`);
+      el.classList.add('reveal', 'reveal-init');
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      targets.forEach(el => el.classList.remove('reveal-init'));
+      const start = () => targets.forEach(el => revealObserver.observe(el));
+      if (window.ikxIntroActive) {
+        document.addEventListener('ikx:intro-done', start, { once: true });
+      } else {
+        start();
+      }
+    }));
+  }
+
+  initReveal();
 });
