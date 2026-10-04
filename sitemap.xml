@@ -37,6 +37,10 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://ikorex.com.au/blog</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
     <loc>https://ikorex.com.au/blog-detail</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>

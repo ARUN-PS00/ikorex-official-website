@@ -480,6 +480,89 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // --- Liquid colour field ---
+  // Soft colour orbs spread down the page give the transparent glass panels
+  // something to refract. They scroll with the content, so blur cost stays low.
+  (function addLiquidOrbs() {
+    if (document.querySelector('.liquid-orbs')) return;
+    const field = document.createElement('div');
+    field.className = 'liquid-orbs';
+    field.setAttribute('aria-hidden', 'true');
+    const palette = ['var(--orb-1)', 'var(--orb-2)', 'var(--orb-3)'];
+    const spots = [[12, 6, 520], [88, 10, 440], [70, 24, 380], [8, 34, 460], [92, 46, 500],
+      [30, 56, 420], [80, 66, 460], [15, 78, 520], [65, 88, 440], [40, 97, 480]];
+    spots.forEach(([x, y, size], i) => {
+      const orb = document.createElement('span');
+      orb.className = 'liquid-orb';
+      orb.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;--orb-color:${palette[i % 3]}`;
+      field.appendChild(orb);
+    });
+    document.body.prepend(field);
+  })();
+
+  // --- Liquid tab indicator: a glass pill that glides between tabs ---
+  function initTabIndicator(container, activeSelector) {
+    if (!container) return;
+    const indicator = document.createElement('span');
+    indicator.className = 'tab-indicator';
+    indicator.setAttribute('aria-hidden', 'true');
+    container.prepend(indicator);
+    container.classList.add('has-indicator');
+    const tabs = () => Array.from(container.querySelectorAll(':scope > a'));
+    const moveTo = (el) => {
+      if (!el || el.offsetParent === null || getComputedStyle(container).flexDirection === 'column') {
+        indicator.style.opacity = '0';
+        return;
+      }
+      indicator.style.width = `${el.offsetWidth}px`;
+      indicator.style.height = `${el.offsetHeight}px`;
+      indicator.style.transform = `translate(${el.offsetLeft}px, ${el.offsetTop}px)`;
+      indicator.style.opacity = '1';
+    };
+    const toActive = () => moveTo(container.querySelector(activeSelector));
+    // First placement is instant so the pill doesn't slide in from the left on load
+    const placeInstantly = () => {
+      indicator.style.transition = 'none';
+      toActive();
+      void indicator.offsetWidth;
+      indicator.style.transition = '';
+    };
+    tabs().forEach(a => a.addEventListener('mouseenter', () => moveTo(a)));
+    container.addEventListener('mouseleave', toActive);
+    window.addEventListener('resize', placeInstantly);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeInstantly);
+    placeInstantly();
+    return toActive;
+  }
+
+  const syncNavIndicator = initTabIndicator(document.querySelector('.nav-links'), ':scope > a.active');
+  const syncSegIndicator = initTabIndicator(document.querySelector('.segmented-nav'), ':scope > a.active');
+  window.addEventListener('scroll', () => {
+    if (syncNavIndicator) requestAnimationFrame(syncNavIndicator);
+    if (syncSegIndicator) requestAnimationFrame(syncSegIndicator);
+  }, { passive: true });
+
+  // --- Subtle 3D tilt on glass cards (fine pointers only) ---
+  const TILT_SELECTOR = '.diagnosis-card, .risk-card, .capability-card, .engine-card, .value-row, ' +
+    '.team-card, .process-step, .blog-card, .contact-info-card, .stat-card-compact';
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll(TILT_SELECTOR).forEach(card => {
+      card.classList.add('tilt');
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty('--tilt-x', `${(-py * 4).toFixed(2)}deg`);
+        card.style.setProperty('--tilt-y', `${(px * 5).toFixed(2)}deg`);
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--tilt-x', '0deg');
+        card.style.setProperty('--tilt-y', '0deg');
+      });
+    });
+  }
+
   // --- Hero word rotator: cycles through the processes we automate ---
   const rotator = document.querySelector('[data-rotator]');
   if (rotator && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

@@ -7467,6 +7467,326 @@ body.dark-theme .hero-rotator-words {
   }
 }
 
+/* ==========================================================================
+   v5: transparent glass, readability, headline scale
+   ========================================================================== */
+
+/* --- True transparent glass: panels let colour through, edges carry the light --- */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.26);
+  --glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.70);
+  --glass-blur: blur(18px) saturate(200%) brightness(1.04);
+  --glass-shadow: 0 1px 1px rgba(10, 30, 60, 0.03), 0 12px 32px -14px rgba(10, 40, 90, 0.18), 0 30px 60px -34px rgba(0, 80, 180, 0.20);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.30), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --glass-spec-strength: 0.7;
+  --orb-1: rgba(0, 136, 255, 0.30);
+  --orb-2: rgba(34, 211, 238, 0.28);
+  --orb-3: rgba(99, 102, 241, 0.20);
+  --text-muted: rgba(12, 16, 23, 0.68);
+}
+
+body.dark-theme {
+  --glass-bg: rgba(255, 255, 255, 0.045);
+  --glass-bg-strong: rgba(14, 20, 34, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.11);
+  --glass-blur: blur(18px) saturate(170%);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  --glass-spec-strength: 0.18;
+  --orb-1: rgba(0, 120, 255, 0.30);
+  --orb-2: rgba(0, 200, 255, 0.16);
+  --orb-3: rgba(99, 102, 241, 0.22);
+  --text-muted: rgba(252, 252, 253, 0.70);
+}
+
+/* Colour field that scrolls with the page, so glass panels have something to refract */
+body {
+  position: relative;
+}
+
+.liquid-orbs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.liquid-orb {
+  position: absolute;
+  background: radial-gradient(closest-side, var(--orb-color), transparent);
+  transform: translate(-50%, -50%);
+}
+
+/* Inner surfaces stay readable on clearer glass */
+.card-visual,
+.queue-card,
+.pipeline-card,
+.founder-card {
+  background-color: rgba(255, 255, 255, 0.40);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+}
+
+.navbar {
+  background-color: rgba(255, 255, 255, 0.38);
+}
+
+body.dark-theme .navbar {
+  background-color: rgba(10, 14, 24, 0.45);
+}
+
+.navbar.is-scrolled {
+  background-color: rgba(255, 255, 255, 0.58);
+}
+
+body.dark-theme .navbar.is-scrolled {
+  background-color: rgba(10, 14, 24, 0.65);
+}
+
+/* --- Liquid tab indicator (nav + segmented nav) --- */
+.nav-links,
+.segmented-nav {
+  position: relative;
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 0;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35));
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 #fff, 0 4px 14px -4px rgba(0, 100, 220, 0.30), 0 0 0 1px rgba(0, 136, 255, 0.10);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  backdrop-filter: blur(8px) saturate(180%);
+  transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring), height 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+
+body.dark-theme .tab-indicator {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 4px 16px -4px rgba(0, 0, 0, 0.6), 0 0 18px -6px rgba(0, 180, 255, 0.45);
+}
+
+.has-indicator > a {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 769px) {
+  .has-indicator > a.active,
+  .has-indicator > a:hover {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.segmented-nav.has-indicator > a.active,
+.segmented-nav.has-indicator > a:hover {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* --- 3D tilt on glass cards (driven by pointer in main.js) --- */
+.tilt {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--lift, 0px));
+}
+
+.tilt:hover {
+  --lift: -4px;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--lift, 0px));
+}
+
+/* --- Home headline: lead line now carries real weight --- */
+.hero-title-lead {
+  font-size: clamp(2rem, 3.7vw, 3.3rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  color: var(--text-muted);
+}
+
+.hero-title-main {
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+}
+
+.hero-title {
+  gap: 0.15em;
+}
+
+@media (max-width: 768px) {
+  .hero-title-lead {
+    font-size: clamp(1.75rem, 7.4vw, 2.2rem);
+  }
+}
+
+/* --- Trust bar now has three items --- */
+.trust-bar {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .trust-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .trust-item:nth-child(3)::before {
+    display: block;
+  }
+}
+
+/* --- Readability --- */
+body {
+  font-size: 1.0625rem;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01";
+}
+
+h1, h2, h3,
+.section-title,
+.page-title,
+.hero-title,
+.card-title,
+.cta-title {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+.section-subtitle,
+.page-lead {
+  line-height: 1.6;
+}
+
+.card-body,
+.risk-card-body,
+.capability-body,
+.engine-card-desc,
+.solution-card-desc,
+.value-card-desc,
+.team-profile-bio,
+.process-step p,
+.cta-description,
+.about-story-copy p {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.solution-check-text,
+.engine-features li,
+.comparison-list li,
+.trust-item span,
+.founder-card-meta {
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* Small-caps labels: sans instead of mono, readable tracking */
+.card-pretitle,
+.comparison-header {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+
+.card-title,
+.risk-card-title,
+.capability-title,
+.engine-card-title {
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+/* --- Blog index page --- */
+.blog-grid-page {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.blog-card-category {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+body.dark-theme .blog-card-category {
+  color: #5cc8ff;
+}
+
+.blog-card-excerpt {
+  margin-top: 10px;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.blog-card-more {
+  margin-top: auto;
+  padding-top: 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent-orange);
+}
+
+.blog-index .blog-card-title {
+  font-size: 1.3rem;
+}
+
+.section-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.section-more .arrow {
+  margin-left: 8px;
+  transition: transform 0.25s ease;
+}
+
+.section-more .btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 1024px) {
+  .blog-grid-page {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-grid-page {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Six nav tabs on mid-size screens */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .nav-links {
+    gap: 0;
+  }
+
+  .nav-links > a {
+    padding: 8px 10px;
+    font-size: 0.86rem;
+  }
+
+  .navbar-container {
+    padding: 0 18px;
+  }
+}
+
 /* --- Scroll reveal --- */
 .reveal {
   opacity: 0;
@@ -7512,11 +7832,7 @@ body.dark-theme .hero-rotator-words {
 /* --- Responsive --- */
 @media (max-width: 1024px) {
   .trust-bar {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .trust-item:nth-child(3)::before {
-    display: none;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .about-hero-grid,
