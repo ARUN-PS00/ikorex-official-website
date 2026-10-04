@@ -563,6 +563,151 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Visuals run only while on screen (saves battery, keeps scroll smooth) ---
+  const vizEls = document.querySelectorAll('[data-viz]');
+  if ('IntersectionObserver' in window) {
+    const vizObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // Headings animate once; looping visuals pause when off screen
+        if (entry.target.classList.contains('viz')) entry.target.classList.toggle('in-view', entry.isIntersecting);
+        else if (entry.isIntersecting) entry.target.classList.add('in-view');
+      });
+    }, { threshold: 0.25 });
+    vizEls.forEach(el => vizObserver.observe(el));
+  } else {
+    vizEls.forEach(el => el.classList.add('in-view'));
+  }
+
+  // --- Hero pipeline: one invoice moves through four stages ---
+  // Desktop: the hero pins and scroll position drives the stage; while the
+  // visitor is still at the top it auto-plays. Tablets and phones auto-play
+  // when visible. Reduced motion shows every stage as a static list.
+  (function initPipeline() {
+    const panel = document.querySelector('[data-pipeline]');
+    const pin = document.querySelector('[data-hero-pin]');
+    if (!panel || !pin) return;
+    const inner = pin.querySelector('.hero-pin-inner');
+    const steps = panel.querySelectorAll('.pipe-step');
+    const stages = panel.querySelectorAll('.pipe-stage');
+    const bar = panel.querySelector('.pipe-progress-bar');
+    const timer = panel.querySelector('[data-pipe-timer]');
+    const TIMES = [0.4, 1.3, 2.4, 3.2];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = window.matchMedia('(min-width: 1025px)');
+
+    if (reduce.matches) {
+      panel.classList.add('is-static');
+      if (timer) timer.textContent = '3.2 s';
+      return;
+    }
+
+    let current = -1;
+    let shownTime = 0;
+    let timerFrame = null;
+    function animateTimer(target) {
+      cancelAnimationFrame(timerFrame);
+      const from = shownTime, start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / 600);
+        shownTime = from + (target - from) * (1 - Math.pow(1 - t, 3));
+        if (timer) timer.textContent = `${shownTime.toFixed(1)} s`;
+        if (t < 1) timerFrame = requestAnimationFrame(step);
+      };
+      timerFrame = requestAnimationFrame(step);
+    }
+
+    function setStage(i, progress) {
+      if (bar) bar.style.width = `${progress == null ? (i + 1) * 25 : Math.max(4, progress * 100)}%`;
+      if (i === current) return;
+      current = i;
+      steps.forEach((el, n) => {
+        el.classList.toggle('is-active', n === i);
+        el.classList.toggle('is-done', n < i);
+      });
+      stages.forEach((el, n) => {
+        el.classList.toggle('is-active', n === i);
+        el.classList.toggle('is-past', n < i);
+      });
+      animateTimer(TIMES[i]);
+    }
+
+    // Auto-play loop (used at the top of the page and on smaller screens)
+    let autoTimer = null;
+    let autoStage = 0;
+    function startAuto() {
+      if (autoTimer) return;
+      autoTimer = setInterval(() => {
+        if (document.hidden) return;
+        autoStage = (autoStage + 1) % 4;
+        setStage(autoStage);
+      }, 2600);
+    }
+    function stopAuto() {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+
+    let visible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        visible = entries[0].isIntersecting;
+        if (!desktop.matches) visible ? startAuto() : stopAuto();
+      }, { threshold: 0.2 }).observe(panel);
+    }
+
+    // Pinned scroll mode (desktop)
+    let pinStart = 0, pinTravel = 1, stickyTop = 0, ticking = false;
+    function measure() {
+      if (!desktop.matches) {
+        pin.classList.remove('is-pinned');
+        pin.style.height = '';
+        inner.style.top = '';
+        return;
+      }
+      pin.classList.add('is-pinned');
+      const vh = window.innerHeight;
+      const innerH = inner.offsetHeight;
+      stickyTop = Math.min(0, vh - innerH);
+      inner.style.top = `${stickyTop}px`;
+      pinTravel = Math.round(vh * 1.3);
+      pin.style.height = `${innerH + pinTravel}px`;
+      pinStart = pin.getBoundingClientRect().top + window.scrollY;
+    }
+    function onScroll() {
+      if (!desktop.matches) return;
+      const progress = (window.scrollY - pinStart + stickyTop) / pinTravel;
+      if (progress <= 0.02) {
+        startAuto();
+        return;
+      }
+      stopAuto();
+      const p = Math.min(1, progress);
+      autoStage = Math.min(3, Math.floor(p * 4));
+      setStage(autoStage, p);
+    }
+
+    setStage(0);
+    measure();
+    if (desktop.matches) {
+      onScroll();
+      if (window.scrollY <= 2) startAuto();
+    } else {
+      startAuto();
+    }
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { onScroll(); ticking = false; });
+    }, { passive: true });
+    window.addEventListener('resize', () => { measure(); onScroll(); });
+    window.addEventListener('load', () => { measure(); onScroll(); });
+    desktop.addEventListener('change', () => {
+      stopAuto();
+      measure();
+      if (desktop.matches) onScroll(); else startAuto();
+    });
+  })();
+
   // --- Hero word rotator: cycles through the processes we automate ---
   const rotator = document.querySelector('[data-rotator]');
   if (rotator && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
