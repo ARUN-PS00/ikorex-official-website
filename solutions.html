@@ -5,14 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>iKOREX Automation Solutions | System Matrices</title>
   <meta name="description" content="Address high transaction risks with iKOREX's four mission-critical solution suites: Order to Cash (O2C), Procure to Pay (P2P), Loss Prevention AI Vision, and CA-grade Intelligent Finance.">
+  <link rel="canonical" href="https://ikorex.com.au/solutions">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ikorex.com.au/solutions">
+  <meta property="og:title" content="iKOREX Automation Solutions | System Matrices">
+  <meta property="og:description" content="Address high transaction risks with iKOREX&#x27;s four mission-critical solution suites: Order to Cash (O2C), Procure to Pay (P2P), Loss Prevention AI Vision, and CA-grade Intelligent Finance.">
+  <meta property="og:image" content="https://ikorex.com.au/logo.png">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
   
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
   
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -23,7 +32,7 @@
     (function() {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) {}
@@ -336,6 +345,6 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 </html>

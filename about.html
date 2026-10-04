@@ -7,16 +7,25 @@
   <title>iKOREX | About Us</title>
   <meta name="description"
     content="Meet iKOREX: a Melbourne team of automation engineers and Chartered Accountants, founded in 2024 to take manual work off operations teams.">
+  <link rel="canonical" href="https://ikorex.com.au/about">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ikorex.com.au/about">
+  <meta property="og:title" content="iKOREX | About Us">
+  <meta property="og:description" content="Meet iKOREX: a Melbourne team of automation engineers and Chartered Accountants, founded in 2024 to take manual work off operations teams.">
+  <meta property="og:image" content="https://ikorex.com.au/logo.png">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
 
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -28,7 +37,7 @@
     (function () {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) { }
@@ -127,7 +136,7 @@
         <div class="founders-grid">
           <div class="founder-card">
             <div class="founder-img-wrapper">
-              <img src="assets/images/Team/yesudas_sebastian.jpg" alt="Yesudas Sebastian" class="founder-img">
+              <img src="assets/images/Team/yesudas_sebastian.webp" alt="Yesudas Sebastian" class="founder-img">
             </div>
             <div class="founder-card-info">
               <div class="founder-card-name">Yesudas Sebastian</div>
@@ -138,7 +147,7 @@
           </div>
           <div class="founder-card">
             <div class="founder-img-wrapper">
-              <img src="assets/images/Team/subin_peter.png" alt="Subin Peter" class="founder-img">
+              <img src="assets/images/Team/subin_peter.webp" alt="Subin Peter" class="founder-img">
             </div>
             <div class="founder-card-info">
               <div class="founder-card-name">Subin Peter</div>
@@ -233,7 +242,7 @@
           </div>
         </div>
         <div class="team-card">
-          <img class="team-avatar" src="assets/images/Team/team_2.jpg" alt="Allen Jose" loading="lazy">
+          <img class="team-avatar" src="assets/images/Team/team_2.webp" alt="Allen Jose" loading="lazy">
           <div class="team-card-body">
             <h3 class="team-profile-name">Allen Jose</h3>
             <div class="team-profile-role">Process Automation Lead <span class="credential">CA</span></div>
@@ -242,7 +251,7 @@
           </div>
         </div>
         <div class="team-card">
-          <img class="team-avatar" src="assets/images/Team/team_3.jpg" alt="Rueben Jose" loading="lazy">
+          <img class="team-avatar" src="assets/images/Team/team_3.webp" alt="Rueben Jose" loading="lazy">
           <div class="team-card-body">
             <h3 class="team-profile-name">Rueben Jose</h3>
             <div class="team-profile-role">Financial Automation Specialist <span class="credential">CA</span></div>
@@ -251,7 +260,7 @@
           </div>
         </div>
         <div class="team-card">
-          <img class="team-avatar" src="assets/images/Team/team_1.jpg" alt="Alen T Jose" loading="lazy">
+          <img class="team-avatar" src="assets/images/Team/team_1.webp" alt="Alen T Jose" loading="lazy">
           <div class="team-card-body">
             <h3 class="team-profile-name">Alen T Jose</h3>
             <div class="team-profile-role">Business Automation Specialist <span class="credential">CA</span></div>
@@ -371,7 +380,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 
 </html>

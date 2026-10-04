@@ -7,6 +7,9 @@
   <title>iKOREX | Enterprise Intelligent Process Automation</title>
   <meta name="description"
     content="Automate repetitive business processes with AI to save time, reduce costs, and help your team focus on what matters most.">
+  <link rel="canonical" href="https://ikorex.com.au/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
   <meta name="keywords"
     content="AI process automation, intelligent automation, financial workflows, enterprise AI, Melbourne automation">
 
@@ -45,14 +48,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter+Tight:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
   <script>
     try { if (sessionStorage.getItem('ikx-intro-seen')) document.documentElement.classList.add('intro-seen'); } catch (e) { }
   </script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
@@ -60,7 +63,7 @@
     (function () {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) { }
@@ -156,7 +159,24 @@
           </span>
           <span class="badge-text">Enterprise Automation • Melbourne, AU</span>
         </div>
-        <h1 class="hero-title">Stop Wasting Hours on Manual Work. Let Us Complete It in Seconds.</h1>
+        <h1 class="hero-title">
+          <span class="hero-title-lead">Stop wasting hours on manual work.</span>
+          <span class="hero-title-main">Let us complete it in <span class="hero-title-accent">seconds.</span></span>
+        </h1>
+        <p class="hero-rotator">
+          <span class="hero-rotator-label">AI automation for</span>
+          <span class="hero-rotator-chip">
+            <span class="hero-rotator-words" data-rotator>
+              <span class="hero-rotator-word is-active">invoice processing</span>
+              <span class="hero-rotator-word">approvals</span>
+              <span class="hero-rotator-word">payroll</span>
+              <span class="hero-rotator-word">procurement</span>
+              <span class="hero-rotator-word">reconciliation</span>
+              <span class="hero-rotator-word">reporting</span>
+              <span class="hero-rotator-word">data entry</span>
+            </span>
+          </span>
+        </p>
         <p class="hero-description">Automate repetitive business processes with AI to save time, reduce costs, and help
           your team focus on what matters most.</p>
 
@@ -1150,7 +1170,7 @@
         <article class="blog-card">
           <a href="blog-detail.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-operational-cost.jpg"
+              <img src="assets/images/blog-operational-cost.webp"
                 alt="The Smallest Tasks Can Become Your Biggest Operational Cost" class="blog-card-img" loading="lazy">
             </div>
             <div class="blog-card-content">
@@ -1168,7 +1188,7 @@
         <article class="blog-card">
           <a href="blog-detail-2.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-ai-decision.jpg" alt="Before You Add AI to a Workflow, Ask One Question"
+              <img src="assets/images/blog-ai-decision.webp" alt="Before You Add AI to a Workflow, Ask One Question"
                 class="blog-card-img" loading="lazy">
             </div>
             <div class="blog-card-content">
@@ -1186,7 +1206,7 @@
         <article class="blog-card">
           <a href="blog-detail-3.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-connected-workflows.jpg"
+              <img src="assets/images/blog-connected-workflows.webp"
                 alt="AI Alone Won't Transform Your Business. Connected Workflows Will." class="blog-card-img"
                 loading="lazy">
             </div>
@@ -1312,7 +1332,7 @@
   </footer>
 
   <!-- Custom Logic Script -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 
 </html>

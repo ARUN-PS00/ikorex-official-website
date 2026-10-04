@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('LocalStorage is blocked or disabled in this environment:', e);
   }
   
-  if (savedTheme === 'dark') {
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.body.classList.add('dark-theme');
   }
 
@@ -479,6 +479,23 @@ document.addEventListener('DOMContentLoaded', () => {
       observer.observe(video);
     }
   });
+
+  // --- Hero word rotator: cycles through the processes we automate ---
+  const rotator = document.querySelector('[data-rotator]');
+  if (rotator && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const words = Array.from(rotator.querySelectorAll('.hero-rotator-word'));
+    let current = 0;
+    setInterval(() => {
+      if (document.hidden) return;
+      const prev = words[current];
+      current = (current + 1) % words.length;
+      prev.classList.remove('is-active');
+      prev.classList.add('is-leaving');
+      words[current].classList.remove('is-leaving');
+      words[current].classList.add('is-active');
+      setTimeout(() => prev.classList.remove('is-leaving'), 650);
+    }, 2400);
+  }
 
   // --- Navbar: condense into a tighter glass pill once the page scrolls ---
   const navbar = document.querySelector('.navbar');

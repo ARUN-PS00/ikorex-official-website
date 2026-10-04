@@ -7,16 +7,25 @@
   <title>iKOREX Automation Services | Functional Pillars</title>
   <meta name="description"
     content="Empower your business with iKOREX's three core automation engines: RPA workflow re-engineering, AI camera retail security monitoring, and Chartered Accountant-grade financial reporting.">
+  <link rel="canonical" href="https://ikorex.com.au/services">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ikorex.com.au/services">
+  <meta property="og:title" content="iKOREX Automation Services | Functional Pillars">
+  <meta property="og:description" content="Empower your business with iKOREX&#x27;s three core automation engines: RPA workflow re-engineering, AI camera retail security monitoring, and Chartered Accountant-grade financial reporting.">
+  <meta property="og:image" content="https://ikorex.com.au/logo.png">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
 
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -28,7 +37,7 @@
     (function () {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) { }
@@ -103,10 +112,10 @@
         <div class="engine-card">
           <!-- Card Media: Video (with Poster & Fallback Image) -->
           <div class="engine-card-media has-video is-playing">
-            <video src="assets/images/RPA Video.mp4" poster="assets/images/services-rpa-workflow.jpg" autoplay loop
+            <video src="assets/images/rpa-workflow.mp4" poster="assets/images/services-rpa-workflow.webp" autoplay loop
               muted playsinline preload="metadata" class="engine-media-element">
               <!-- Fallback image if video is not supported -->
-              <img src="assets/images/services-rpa-workflow.jpg" alt="RPA &amp; Workflow Re-engineering"
+              <img src="assets/images/services-rpa-workflow.webp" alt="RPA &amp; Workflow Re-engineering"
                 class="engine-media-element">
             </video>
             <div class="engine-media-overlay"></div>
@@ -168,7 +177,7 @@
         <div class="engine-card">
           <!-- Card Media: Dedicated AI Computer Vision Image (Video-ready) -->
           <div class="engine-card-media">
-            <img src="assets/images/services-ai-security.jpg" alt="AI Camera Security Monitoring"
+            <img src="assets/images/services-ai-security.webp" alt="AI Camera Security Monitoring"
               class="engine-media-element" loading="lazy">
             <div class="engine-media-overlay"></div>
             <div class="engine-media-badge">
@@ -208,7 +217,7 @@
         <div class="engine-card">
           <!-- Card Media: Dedicated Financial Intelligence Image (Video-ready) -->
           <div class="engine-card-media">
-            <img src="assets/images/services-financial-reporting.jpg"
+            <img src="assets/images/services-financial-reporting.webp"
               alt="Accounting, Bookkeeping &amp; Financial Reporting" class="engine-media-element" loading="lazy">
             <div class="engine-media-overlay"></div>
             <div class="engine-media-badge">
@@ -388,7 +397,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 
 </html>

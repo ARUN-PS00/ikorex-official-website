@@ -7,16 +7,25 @@
   <title>Privacy Policy | iKOREX Australia</title>
   <meta name="description"
     content="Read the iKOREX Privacy & Data Management Policy. Learn how we collect, handle, use, and secure personal and business data across our automated services.">
+  <link rel="canonical" href="https://ikorex.com.au/privacy">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ikorex.com.au/privacy">
+  <meta property="og:title" content="Privacy Policy | iKOREX Australia">
+  <meta property="og:description" content="Read the iKOREX Privacy &amp; Data Management Policy. Learn how we collect, handle, use, and secure personal and business data across our automated services.">
+  <meta property="og:image" content="https://ikorex.com.au/logo.png">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
 
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -28,7 +37,7 @@
     (function () {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) { }
@@ -515,7 +524,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 
   <!-- Page-specific Scroll-spy and highlight sidebar links script -->
   <script>

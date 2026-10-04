@@ -5,14 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact iKOREX | Enterprise Process Automation Melbourne</title>
   <meta name="description" content="Get in touch with the iKOREX team to automate your repetitive business processes, schedule a discovery call, or request support.">
+  <link rel="canonical" href="https://ikorex.com.au/contact">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ikorex.com.au/contact">
+  <meta property="og:title" content="Contact iKOREX | Enterprise Process Automation Melbourne">
+  <meta property="og:description" content="Get in touch with the iKOREX team to automate your repetitive business processes, schedule a discovery call, or request support.">
+  <meta property="og:image" content="https://ikorex.com.au/logo.png">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
   
   <!-- Inter Tight & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
   
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -23,7 +32,7 @@
     (function() {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) {}
@@ -140,11 +149,19 @@
 
         <!-- Right Column: Interactive Form -->
         <div class="contact-form-card">
-          <div class="form-notification success" id="formSuccess">
+          <div class="form-notification success" id="formSuccess" role="status">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             <span>Thank you! Your message has been sent successfully. We will be in touch shortly.</span>
+          </div>
+          <div class="form-notification error" id="formError" role="alert">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="formErrorText">Something went wrong. Please try again or call us on 1800 280 626.</span>
           </div>
 
           <form class="contact-form" id="contactForm" onsubmit="handleFormSubmit(event)">
@@ -274,7 +291,7 @@
   </footer>
 
   <!-- Theme and Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
   
   <!-- Inline form submission handling script -->
   <script>
@@ -285,6 +302,16 @@
       const data = new FormData(form);
       const submitButton = form.querySelector('button[type="submit"]');
       const successBanner = document.getElementById('formSuccess');
+      const errorBanner = document.getElementById('formError');
+      const errorText = document.getElementById('formErrorText');
+      const showError = (message) => {
+        if (successBanner) successBanner.style.display = 'none';
+        if (!errorBanner) return;
+        if (errorText) errorText.textContent = message;
+        errorBanner.style.display = 'flex';
+        errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      if (errorBanner) errorBanner.style.display = 'none';
       
       if (submitButton) {
         submitButton.disabled = true;
@@ -307,14 +334,14 @@
         } else {
           response.json().then(data => {
             if (Object.hasOwn(data, 'errors')) {
-              alert(data["errors"].map(error => error["message"]).join(", "));
+              showError(data["errors"].map(error => error["message"]).join(", "));
             } else {
-              alert('Oops! There was a problem submitting your form.');
+              showError('Something went wrong. Please try again or call us on 1800 280 626.');
             }
           });
         }
       }).catch(error => {
-        alert('Oops! There was a problem submitting your form.');
+        showError('We could not send your message. Please check your connection, try again, or call us on 1800 280 626.');
       }).finally(() => {
         if (submitButton) {
           submitButton.disabled = false;

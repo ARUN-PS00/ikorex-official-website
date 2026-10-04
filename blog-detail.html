@@ -7,6 +7,15 @@
   <title>The Smallest Tasks Can Become Your Biggest Operational Cost | iKOREX Insights</title>
   <meta name="description"
     content="Why 15-20 minute manual tasks quietly cost businesses hundreds of hours each year — and how to identify, measure, and automate repetitive workflows.">
+  <link rel="canonical" href="https://ikorex.com.au/blog-detail">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://ikorex.com.au/blog-detail">
+  <meta property="og:title" content="The Smallest Tasks Can Become Your Biggest Operational Cost | iKOREX Insights">
+  <meta property="og:description" content="Why 15-20 minute manual tasks quietly cost businesses hundreds of hours each year — and how to identify, measure, and automate repetitive workflows.">
+  <meta property="og:image" content="https://ikorex.com.au/assets/images/blog-operational-cost.jpg">
+  <meta property="og:site_name" content="iKOREX">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ikorex_official">
   <meta name="keywords"
     content="operational cost, repetitive tasks, process automation, robotic process automation, RPA Melbourne, business efficiency, workflow optimization">
 
@@ -14,11 +23,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
 
   <!-- Global Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Favicon & Google Search Icon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -31,7 +40,7 @@
     (function () {
       try {
         const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.body.classList.add('dark-theme');
         }
       } catch (e) { }
@@ -157,7 +166,7 @@
       <!-- Author and Meta Row -->
       <div class="article-author-bar">
         <div class="author-info-group">
-          <img src="assets/images/Team/yesudas_sebastian.jpg" alt="Yesudas Sebastian" class="author-avatar">
+          <img src="assets/images/Team/yesudas_sebastian.webp" alt="Yesudas Sebastian" class="author-avatar">
           <div class="author-details">
             <span class="author-name">Yesudas Sebastian</span>
             <span class="author-role">Co-Founder &amp; CEO, iKOREX</span>
@@ -199,7 +208,7 @@
 
       <!-- Featured Image Banner -->
       <div class="article-featured-media">
-        <img src="assets/images/blog-operational-cost.jpg"
+        <img src="assets/images/blog-operational-cost.webp"
           alt="Modern architectural hourglass and precision metallic structures representing business operational time"
           class="article-featured-img">
         <p class="article-img-caption">Figure 1.0: Repetitive manual tasks quietly consume thousands of hours across
@@ -417,7 +426,7 @@
 
         <!-- Inline Figure 1: Context Switching & Document Workflows -->
         <figure class="article-inline-media">
-          <img src="assets/images/blog-context-switching.jpg"
+          <img src="assets/images/blog-context-switching.webp"
             alt="Executive workstation with data streams and document workflows across multiple business platforms"
             class="article-inline-img" loading="lazy">
           <figcaption class="article-img-caption">Figure 2.0: The hidden cost of context switching—employees moving
@@ -765,7 +774,7 @@
 
         <!-- Inline Figure 2: Automated Process Pipeline -->
         <figure class="article-inline-media">
-          <img src="assets/images/blog-process-pipeline.jpg"
+          <img src="assets/images/blog-process-pipeline.webp"
             alt="Streamlined automated workflow pipelines connecting data ingestion, routing, validation, and approval"
             class="article-inline-img" loading="lazy">
           <figcaption class="article-img-caption">Figure 3.0: Transitioning from manual handoffs to automated,
@@ -844,7 +853,7 @@
 
           <!-- Author Bio Box -->
           <div class="author-box-card">
-            <img src="assets/images/Team/yesudas_sebastian.jpg" alt="Yesudas Sebastian" class="author-box-img">
+            <img src="assets/images/Team/yesudas_sebastian.webp" alt="Yesudas Sebastian" class="author-box-img">
             <div>
               <div
                 style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
@@ -963,7 +972,7 @@
         <article class="blog-card">
           <a href="blog-detail-2.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-ai-decision.jpg" alt="Before You Add AI to a Workflow, Ask One Question"
+              <img src="assets/images/blog-ai-decision.webp" alt="Before You Add AI to a Workflow, Ask One Question"
                 class="blog-card-img" loading="lazy">
             </div>
             <div class="blog-card-content">
@@ -981,7 +990,7 @@
         <article class="blog-card">
           <a href="blog-detail-3.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-connected-workflows.jpg"
+              <img src="assets/images/blog-connected-workflows.webp"
                 alt="AI Alone Won't Transform Your Business. Connected Workflows Will." class="blog-card-img"
                 loading="lazy">
             </div>
@@ -1104,7 +1113,7 @@
   </footer>
 
   <!-- Theme & Custom JavaScript -->
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 
   <!-- Blog Detail Interactive Features -->
   <script>
