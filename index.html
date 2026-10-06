@@ -138,6 +138,7 @@
 
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
+    <div class="hero-cursor-field" aria-hidden="true"></div>
     <div class="hero-pin" data-hero-pin>
       <div class="hero-pin-inner">
     <div class="section-container hero-grid">
@@ -243,24 +244,24 @@
             <div class="pipe-stage">
               <span class="pipe-kicker">02 &middot; Understand</span>
               <h3 class="pipe-title">AI reads the fields, not just the text</h3>
-              <div class="pipe-doc">
+              <div class="pipe-doc" data-pipe-doc>
                 <span class="pipe-scan" aria-hidden="true"></span>
-                <div><span>Supplier</span><b>Acme Supplies Pty Ltd</b></div>
-                <div><span>Invoice no.</span><b>INV-2041</b></div>
-                <div><span>PO reference</span><b>PO-0778</b></div>
-                <div><span>Total incl. GST</span><b>$4,820.00</b></div>
-                <div><span>Due</span><b>30 days</b></div>
-                <div><span>Confidence</span><b class="ok">High</b></div>
+                <div><span>Supplier</span><b class="pipe-decode-val" data-raw="ACME SUPPLIES PTY LTD [RAW]" data-final="Acme Supplies Pty Ltd">Acme Supplies Pty Ltd</b></div>
+                <div><span>Invoice no.</span><b class="pipe-decode-val" data-raw="INV ···· 2041" data-final="INV-2041">INV-2041</b></div>
+                <div><span>PO reference</span><b class="pipe-decode-val" data-raw="PO ···· 0778" data-final="PO-0778">PO-0778</b></div>
+                <div><span>Total incl. GST</span><b class="pipe-decode-val" data-raw="$ ·,···.··" data-final="$4,820.00">$4,820.00</b></div>
+                <div><span>Due</span><b class="pipe-decode-val" data-raw="NET 30 DAYS" data-final="30 days">30 days</b></div>
+                <div><span>Confidence</span><b class="pipe-decode-val ok" data-raw="ANALYZING..." data-final="High">High</b></div>
               </div>
             </div>
             <div class="pipe-stage">
               <span class="pipe-kicker">03 &middot; Validate</span>
               <h3 class="pipe-title">Checked before anyone has to look</h3>
               <ul class="pipe-checks">
-                <li><span>Matches purchase order PO-0778</span><b>Pass</b></li>
-                <li><span>Goods receipt recorded</span><b>Pass</b></li>
-                <li><span>Amount within tolerance</span><b>Pass</b></li>
-                <li><span>Duplicate check</span><b>None found</b></li>
+                <li><span>Matches purchase order PO-0778</span><b data-status="Pass">Pass</b></li>
+                <li><span>Goods receipt recorded</span><b data-status="Pass">Pass</b></li>
+                <li><span>Amount within tolerance</span><b data-status="Pass">Pass</b></li>
+                <li><span>Duplicate check</span><b data-status="None found">None found</b></li>
               </ul>
             </div>
             <div class="pipe-stage">
@@ -367,14 +368,28 @@
           </div>
 
           <div class="card-visual viz viz-floor" data-viz aria-hidden="true">
-            <span class="viz-floor-label">Store floor &middot; live &middot; face-free</span>
-            <span class="viz-aisle a1"></span>
-            <span class="viz-aisle a2"></span>
-            <span class="viz-aisle a3"></span>
-            <span class="viz-person p1"></span>
-            <span class="viz-person p2"></span>
-            <span class="viz-person p3"></span>
-            <div class="viz-alert"><strong>Concealment behaviour &middot; Aisle 3</strong><span>6-second clip sent to floor team</span></div>
+            <div class="viz-floor-head">
+              <span class="viz-floor-label">Operational map &middot; live observability</span>
+              <span class="viz-floor-sync">Resolving</span>
+            </div>
+            <div class="viz-telemetry-stack">
+              <div class="viz-telemetry-row t1">
+                <span class="viz-telemetry-node">Zone 01 &middot; Inventory</span>
+                <span class="viz-telemetry-state">Blind spot</span>
+                <span class="viz-telemetry-res">Connecting...</span>
+              </div>
+              <div class="viz-telemetry-row t2">
+                <span class="viz-telemetry-node">Zone 02 &middot; Workflows</span>
+                <span class="viz-telemetry-state">Fragmented</span>
+                <span class="viz-telemetry-res ok">Mapped &check;</span>
+              </div>
+              <div class="viz-telemetry-row t3">
+                <span class="viz-telemetry-node">Zone 03 &middot; Floor operations</span>
+                <span class="viz-telemetry-state">Telemetry linked</span>
+                <span class="viz-telemetry-res ok">Verified &check;</span>
+              </div>
+            </div>
+            <div class="viz-alert"><strong>Full operational visibility</strong><span>All dependencies discovered &middot; 100% active</span></div>
           </div>
 
           <a href="solutions.html#loss-prevention" class="card-link">Explore AI Vision Solutions <span class="arrow">→</span></a>

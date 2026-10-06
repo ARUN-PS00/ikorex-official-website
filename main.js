@@ -132,22 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 2. Liquid Glass Light Tracking ---
-  // Moves the specular highlight on glass panels to follow the pointer
-  const GLASS_SELECTOR = '.glass, .diagnosis-card, .comparison-card, .risk-card, .capability-card, ' +
-    '.stat-card-compact, .cta-card, .engine-card, .solution-horizontal-card, .premium-value-card, ' +
-    '.founders-panel, .contact-info-card, .contact-form-card, .blog-card, .trust-bar, .value-row, ' +
-    '.team-card, .process-step, .sidebar-widget, .article-bento-item, .privacy-contact-card';
-
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    document.addEventListener('pointermove', (e) => {
-      const panel = e.target.closest && e.target.closest(GLASS_SELECTOR);
-      if (!panel) return;
-      const rect = panel.getBoundingClientRect();
-      panel.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-      panel.style.setProperty('--my', `${e.clientY - rect.top}px`);
-    }, { passive: true });
-  }
+  // --- 2. Interactive Material Surface Response ---
+  // Pure object-level response: no mouse-following cursor spotlights.
+  // Surface material contrast and edges respond when hovered via CSS transitions.
 
   // --- 3. Interactive Automation Console Simulation ---
   const consoleTimer = document.getElementById('consoleTimer');
@@ -480,23 +467,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Liquid colour field ---
-  // Soft colour orbs spread down the page give the transparent glass panels
-  // something to refract. They scroll with the content, so blur cost stays low.
-  (function addLiquidOrbs() {
-    if (document.querySelector('.liquid-orbs')) return;
+  // --- Dynamic Atmospheric Field ---
+  // A subtle, soft, blurred environmental depth layer that provides organic atmospheric presence.
+  (function addAtmosphericField() {
+    if (document.querySelector('.atmospheric-field')) return;
     const field = document.createElement('div');
-    field.className = 'liquid-orbs';
+    field.className = 'atmospheric-field';
     field.setAttribute('aria-hidden', 'true');
-    const palette = ['var(--orb-1)', 'var(--orb-2)', 'var(--orb-3)'];
-    const spots = [[12, 6, 520], [88, 10, 440], [70, 24, 380], [8, 34, 460], [92, 46, 500],
-      [30, 56, 420], [80, 66, 460], [15, 78, 520], [65, 88, 440], [40, 97, 480]];
-    spots.forEach(([x, y, size], i) => {
-      const orb = document.createElement('span');
-      orb.className = 'liquid-orb';
-      orb.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;--orb-color:${palette[i % 3]}`;
-      field.appendChild(orb);
-    });
+    
+    for (let i = 1; i <= 3; i++) {
+      const layer = document.createElement('div');
+      layer.className = `atmo-layer atmo-layer-${i}`;
+      field.appendChild(layer);
+    }
+
     document.body.prepend(field);
   })();
 
@@ -542,26 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (syncSegIndicator) requestAnimationFrame(syncSegIndicator);
   }, { passive: true });
 
-  // --- Subtle 3D tilt on glass cards (fine pointers only) ---
-  const TILT_SELECTOR = '.diagnosis-card, .risk-card, .capability-card, .engine-card, .value-row, ' +
-    '.team-card, .process-step, .blog-card, .contact-info-card, .stat-card-compact';
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll(TILT_SELECTOR).forEach(card => {
-      card.classList.add('tilt');
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        card.style.setProperty('--tilt-x', `${(-py * 4).toFixed(2)}deg`);
-        card.style.setProperty('--tilt-y', `${(px * 5).toFixed(2)}deg`);
-      });
-      card.addEventListener('pointerleave', () => {
-        card.style.setProperty('--tilt-x', '0deg');
-        card.style.setProperty('--tilt-y', '0deg');
-      });
-    });
-  }
+
 
   // --- Visuals run only while on screen (saves battery, keeps scroll smooth) ---
   const vizEls = document.querySelectorAll('[data-viz]');
@@ -579,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Hero pipeline: one invoice moves through four stages ---
-  // Desktop: the hero pins and scroll position drives the stage; while the
+  // Desktop: the hero pins and scroll position drives the stage & decode resolution; while the
   // visitor is still at the top it auto-plays. Tablets and phones auto-play
   // when visible. Reduced motion shows every stage as a static list.
   (function initPipeline() {
@@ -591,6 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const stages = panel.querySelectorAll('.pipe-stage');
     const bar = panel.querySelector('.pipe-progress-bar');
     const timer = panel.querySelector('[data-pipe-timer]');
+    const decodeVals = Array.from(panel.querySelectorAll('.pipe-decode-val'));
+    const checkBadges = Array.from(panel.querySelectorAll('.pipe-checks b'));
     const TIMES = [0.4, 1.3, 2.4, 3.2];
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = window.matchMedia('(min-width: 1025px)');
@@ -598,6 +565,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (reduce.matches) {
       panel.classList.add('is-static');
       if (timer) timer.textContent = '3.2 s';
+      decodeVals.forEach(el => {
+        el.textContent = el.getAttribute('data-final') || el.textContent;
+      });
       return;
     }
 
@@ -616,8 +586,109 @@ document.addEventListener('DOMContentLoaded', () => {
       timerFrame = requestAnimationFrame(step);
     }
 
+    // Enterprise OCR / Document intelligence scroll-driven decode resolution
+    function renderDecode(stage, progress) {
+      if (decodeVals.length === 0) return;
+
+      // Stage 0 (Capture): data is raw / unextracted
+      if (stage === 0) {
+        decodeVals.forEach(el => {
+          const raw = el.getAttribute('data-raw') || el.getAttribute('data-final') || '';
+          el.textContent = raw;
+          el.style.filter = 'blur(1.2px)';
+          el.style.opacity = '0.75';
+          el.classList.remove('is-resolving');
+        });
+        checkBadges.forEach(b => {
+          b.textContent = 'Evaluating...';
+          b.classList.add('evaluating');
+        });
+        return;
+      }
+
+      // Stage 1 (Understand / AI field extraction): progressive character & field decode
+      if (stage === 1) {
+        const pStage2 = progress == null ? 1 : Math.min(1, Math.max(0, (progress - 0.22) / 0.25));
+        
+        decodeVals.forEach((el, idx) => {
+          const finalStr = el.getAttribute('data-final') || el.textContent;
+          const rawStr = el.getAttribute('data-raw') || finalStr;
+          
+          const stagger = idx * 0.08;
+          const localP = Math.min(1, Math.max(0, (pStage2 - stagger) / 0.55));
+          
+          if (localP >= 1) {
+            el.textContent = finalStr;
+            el.style.filter = 'none';
+            el.style.opacity = '1';
+            el.classList.remove('is-resolving');
+          } else if (localP <= 0) {
+            el.textContent = rawStr;
+            el.style.filter = 'blur(1.2px)';
+            el.style.opacity = '0.75';
+            el.classList.remove('is-resolving');
+          } else {
+            const charCount = Math.floor(localP * finalStr.length);
+            const resolved = finalStr.slice(0, charCount);
+            const rawPart = rawStr.slice(charCount);
+            el.textContent = resolved + rawPart.slice(0, Math.max(0, finalStr.length - charCount));
+            el.style.filter = `blur(${((1 - localP) * 1.2).toFixed(1)}px)`;
+            el.style.opacity = (0.75 + localP * 0.25).toFixed(2);
+            el.classList.add('is-resolving');
+          }
+        });
+
+        checkBadges.forEach(b => {
+          b.textContent = 'Evaluating...';
+          b.classList.add('evaluating');
+        });
+        return;
+      }
+
+      // Stage 2 (Validate): fields 100% resolved, checks resolve progressively
+      if (stage === 2) {
+        decodeVals.forEach(el => {
+          el.textContent = el.getAttribute('data-final') || el.textContent;
+          el.style.filter = 'none';
+          el.style.opacity = '1';
+          el.classList.remove('is-resolving');
+        });
+
+        const pStage3 = progress == null ? 1 : Math.min(1, Math.max(0, (progress - 0.48) / 0.25));
+        const checkThresholds = [0.15, 0.38, 0.62, 0.85];
+
+        checkBadges.forEach((b, idx) => {
+          const targetText = b.getAttribute('data-status') || b.textContent;
+          const th = checkThresholds[idx] || 0.5;
+          if (pStage3 >= th) {
+            b.textContent = targetText;
+            b.classList.remove('evaluating');
+          } else {
+            b.textContent = 'Evaluating...';
+            b.classList.add('evaluating');
+          }
+        });
+        return;
+      }
+
+      // Stage 3 (Post): everything is verified, posted, and complete
+      if (stage === 3) {
+        decodeVals.forEach(el => {
+          el.textContent = el.getAttribute('data-final') || el.textContent;
+          el.style.filter = 'none';
+          el.style.opacity = '1';
+          el.classList.remove('is-resolving');
+        });
+        checkBadges.forEach(b => {
+          b.textContent = b.getAttribute('data-status') || b.textContent;
+          b.classList.remove('evaluating');
+        });
+      }
+    }
+
     function setStage(i, progress) {
       if (bar) bar.style.width = `${progress == null ? (i + 1) * 25 : Math.max(4, progress * 100)}%`;
+      renderDecode(i, progress);
       if (i === current) return;
       current = i;
       steps.forEach((el, n) => {
@@ -631,7 +702,33 @@ document.addEventListener('DOMContentLoaded', () => {
       animateTimer(TIMES[i]);
     }
 
-    // Auto-play loop (used at the top of the page and on smaller screens)
+    // Step interaction: hover, focus, and click activate stage immediately
+    steps.forEach((step, index) => {
+      step.setAttribute('tabindex', '0');
+      step.setAttribute('role', 'button');
+
+      const activate = () => {
+        setStage(index);
+        autoStage = index;
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          startAuto();
+        }
+      };
+
+      step.addEventListener('mouseenter', activate);
+      step.addEventListener('focusin', activate);
+      step.addEventListener('click', activate);
+      step.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activate();
+        }
+      });
+    });
+
+    // Auto-play loop: state -> calm pause (4.5s) -> smooth transition -> calm pause
     let autoTimer = null;
     let autoStage = 0;
     function startAuto() {
@@ -640,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.hidden) return;
         autoStage = (autoStage + 1) % 4;
         setStage(autoStage);
-      }, 2600);
+      }, 4500);
     }
     function stopAuto() {
       clearInterval(autoTimer);
@@ -681,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       stopAuto();
-      const p = Math.min(1, progress);
+      const p = Math.min(1, Math.max(0, progress));
       autoStage = Math.min(3, Math.floor(p * 4));
       setStage(autoStage, p);
     }
@@ -725,12 +822,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2400);
   }
 
-  // --- Navbar: condense into a tighter glass pill once the page scrolls ---
+  // --- Hero Cursor-Responsive Diffuse Field ---
+  // Soft, diffuse cursor-trailing environmental field strictly inside #hero with damped physical settling.
+  const heroEl = document.getElementById('hero');
+  if (heroEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let heroTargetX = 0, heroTargetY = 0;
+    let heroCurX = 0, heroCurY = 0;
+    let heroRaf = null;
+    let isInside = false;
+
+    function renderHeroField() {
+      heroCurX += (heroTargetX - heroCurX) * 0.065;
+      heroCurY += (heroTargetY - heroCurY) * 0.065;
+
+      heroEl.style.setProperty('--hero-cx', `${heroCurX.toFixed(1)}px`);
+      heroEl.style.setProperty('--hero-cy', `${heroCurY.toFixed(1)}px`);
+
+      if (isInside || Math.abs(heroTargetX - heroCurX) > 0.1 || Math.abs(heroTargetY - heroCurY) > 0.1) {
+        heroRaf = requestAnimationFrame(renderHeroField);
+      } else {
+        heroRaf = null;
+      }
+    }
+
+    heroEl.addEventListener('pointerenter', (e) => {
+      const rect = heroEl.getBoundingClientRect();
+      heroTargetX = heroCurX = e.clientX - rect.left;
+      heroTargetY = heroCurY = e.clientY - rect.top;
+      heroEl.style.setProperty('--hero-cx', `${heroCurX.toFixed(1)}px`);
+      heroEl.style.setProperty('--hero-cy', `${heroCurY.toFixed(1)}px`);
+      isInside = true;
+      heroEl.classList.add('has-hero-pointer');
+      if (!heroRaf) heroRaf = requestAnimationFrame(renderHeroField);
+    }, { passive: true });
+
+    heroEl.addEventListener('pointermove', (e) => {
+      const rect = heroEl.getBoundingClientRect();
+      heroTargetX = e.clientX - rect.left;
+      heroTargetY = e.clientY - rect.top;
+      if (!isInside) {
+        isInside = true;
+        heroEl.classList.add('has-hero-pointer');
+      }
+      if (!heroRaf) heroRaf = requestAnimationFrame(renderHeroField);
+    }, { passive: true });
+
+    heroEl.addEventListener('pointerleave', () => {
+      isInside = false;
+      heroEl.classList.remove('has-hero-pointer');
+    });
+  }
+
+  // --- Navbar: smooth glass state response on scroll ---
   const navbar = document.querySelector('.navbar');
   if (navbar) {
-    const syncNavbar = () => navbar.classList.toggle('is-scrolled', window.scrollY > 24);
-    window.addEventListener('scroll', syncNavbar, { passive: true });
-    syncNavbar();
+    let navTicking = false;
+    let isScrolled = false;
+    const updateNavbarState = () => {
+      const scrolled = window.scrollY > 20;
+      if (scrolled !== isScrolled) {
+        isScrolled = scrolled;
+        navbar.classList.toggle('is-scrolled', isScrolled);
+        if (typeof syncNavIndicator === 'function') {
+          requestAnimationFrame(syncNavIndicator);
+        }
+      }
+      navTicking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!navTicking) {
+        navTicking = true;
+        requestAnimationFrame(updateNavbarState);
+      }
+    }, { passive: true });
+    updateNavbarState();
   }
 
   // --- Solutions page: highlight the segmented nav for the section in view ---
@@ -748,9 +914,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Scroll Reveal ---
-  // Panels and headings rise into place as they enter the viewport, staggered
-  // within each grid. Skipped entirely for reduced-motion users and old browsers.
+  // --- Bidirectional Scroll Reveal ---
+  // Elements gracefully resolve into view on entrance and naturally de-resolve when leaving,
+  // working smoothly in both directions with subtle staggered composition.
   const REVEAL_SELECTOR = [
     '.hero-content > *', '.hero-visual', '.trust-bar',
     '.section-head > *', '.section-title', '.section-subtitle', '.custom-badge',
@@ -776,40 +942,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
         const el = entry.target;
-        revealObserver.unobserve(el);
-        el.classList.add('is-visible');
-        // Hand transitions back to the component once the entrance is done
-        const cleanup = () => {
-          el.classList.remove('reveal', 'is-visible');
-          el.style.removeProperty('--reveal-delay');
-        };
-        el.addEventListener('transitionend', function onEnd(ev) {
-          if (ev.target !== el || ev.propertyName !== 'opacity') return;
-          el.removeEventListener('transitionend', onEnd);
-          cleanup();
-        });
-        setTimeout(cleanup, 2200);
+        if (entry.isIntersecting) {
+          el.classList.add('is-visible');
+        } else {
+          // Naturally fade and de-resolve when leaving the viewport region
+          el.classList.remove('is-visible');
+        }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-    // Hide targets instantly (no fade-out), then enable the entrance transition
     targets.forEach(el => {
       const siblings = Array.from(el.parentElement.children).filter(c => all.has(c));
       const index = Math.max(0, siblings.indexOf(el));
-      el.style.setProperty('--reveal-delay', `${Math.min(index, 6) * 80}ms`);
-      el.classList.add('reveal', 'reveal-init');
-    });
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      targets.forEach(el => el.classList.remove('reveal-init'));
-      const start = () => targets.forEach(el => revealObserver.observe(el));
-      if (window.ikxIntroActive) {
-        document.addEventListener('ikx:intro-done', start, { once: true });
-      } else {
-        start();
+      el.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 70}ms`);
+      el.classList.add('reveal');
+
+      // If already in viewport on initial load, activate immediately
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('is-visible');
       }
-    }));
+    });
+
+    const start = () => targets.forEach(el => revealObserver.observe(el));
+    if (window.ikxIntroActive) {
+      document.addEventListener('ikx:intro-done', start, { once: true });
+    } else {
+      start();
+    }
   }
 
   initReveal();
