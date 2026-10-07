@@ -55,7 +55,7 @@
   </script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 
 <body>
@@ -138,7 +138,7 @@
 
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
-    <div class="hero-cursor-field" aria-hidden="true"></div>
+    <canvas class="hero-network-canvas" id="heroNetworkCanvas" aria-hidden="true"></canvas>
     <div class="section-container hero-grid">
       <div class="hero-content">
         <div class="custom-badge animate-fade-in" style="animation-delay: 0.1s;">
@@ -159,26 +159,38 @@
               <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom)" />
             </svg>
           </span>
-          <span class="badge-text">Enterprise Automation • Melbourne, AU</span>
+          <span class="badge-text">Enterprise Automation &bull; Melbourne, AU</span>
         </div>
-        <h1 class="hero-title">
+        <h1 class="hero-title" id="heroTitle">
           <span class="hero-title-lead">Stop wasting hours on manual work.</span>
           <span class="hero-title-main">Let us complete it in <span class="hero-title-accent">seconds.</span></span>
         </h1>
-        <p class="hero-rotator">
-          <span class="hero-rotator-label">AI automation for</span>
-          <span class="hero-rotator-chip">
-            <span class="hero-rotator-words" data-rotator>
-              <span class="hero-rotator-word is-active">invoice processing</span>
-              <span class="hero-rotator-word">approvals</span>
-              <span class="hero-rotator-word">payroll</span>
-              <span class="hero-rotator-word">procurement</span>
-              <span class="hero-rotator-word">reconciliation</span>
-              <span class="hero-rotator-word">reporting</span>
-              <span class="hero-rotator-word">data entry</span>
+        <div class="hero-ai-automation-box" id="heroAiBox" role="region" aria-label="AI Automation Stage Monitor">
+          <div class="ai-box-telemetry" aria-hidden="true">
+            <span class="ai-box-pulse-ring"></span>
+            <span class="ai-box-status-dot" id="aiBoxStatusDot"></span>
+            <span class="ai-box-data-bars" id="aiBoxDataBars">
+              <span class="data-bar b1"></span>
+              <span class="data-bar b2"></span>
+              <span class="data-bar b3"></span>
             </span>
-          </span>
-        </p>
+          </div>
+          <div class="ai-box-text-content">
+            <span class="ai-box-label">AI automation for</span>
+            <div class="ai-box-viewport">
+              <div class="ai-box-stage-stream" id="aiBoxStageStream">
+                <span class="ai-stage-item is-active" data-stage="capture">Capturing invoice...</span>
+                <span class="ai-stage-item" data-stage="understand">Extracting invoice data...</span>
+                <span class="ai-stage-item" data-stage="validate">Validating invoice...</span>
+                <span class="ai-stage-item" data-stage="post">Processing complete</span>
+              </div>
+            </div>
+          </div>
+          <div class="ai-box-meta-badge" id="aiBoxBadge">
+            <span class="ai-box-stage-index" id="aiBoxStageIndex">01</span>
+            <span class="ai-box-stage-status" id="aiBoxStageStatus">CAPTURE</span>
+          </div>
+        </div>
         <p class="hero-description">Automate repetitive business processes with AI to save time, reduce costs, and help
           your team focus on what matters most.</p>
 
@@ -202,7 +214,7 @@
               <polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <span>Complete complex tasks in <strong>3–5 seconds</strong></span>
+            <span>Complete complex tasks in <strong>3&ndash;5 seconds</strong></span>
           </li>
         </ul>
 
@@ -218,124 +230,257 @@
         </div>
       </div>
 
-      <!-- Hero visual: Document-anchored 4-stage workflow -->
+      <!-- Hero visual: Floating Physical Digital File Stack (4 Tilted Digital Documents) -->
       <div class="hero-visual">
-        <div class="workflow-hub" data-pipeline>
-          
-          <!-- Stage Indicator: floating minimalist step track -->
-          <div class="workflow-nav" aria-label="Workflow processing stages">
-            <ol class="pipe-steps">
-              <li class="pipe-step is-active" data-step="0"><span class="pipe-dot">1</span><span>Capture</span></li>
-              <li class="pipe-step" data-step="1"><span class="pipe-dot">2</span><span>Understand</span></li>
-              <li class="pipe-step" data-step="2"><span class="pipe-dot">3</span><span>Validate</span></li>
-              <li class="pipe-step" data-step="3"><span class="pipe-dot">4</span><span>Post</span></li>
-            </ol>
-            <div class="pipe-progress" aria-hidden="true"><span class="pipe-progress-bar"></span></div>
-          </div>
+        <div class="file-stack-container" id="heroFileStack" data-file-stack aria-label="Physical Digital File Stack">
+          <div class="digital-file-deck" id="fileStackDeck" aria-live="polite">
 
-          <!-- Central File Anchor + Emerging Processing Stage Cards -->
-          <div class="workflow-viewport">
-            
-            <!-- Central Anchor Document (The File Being Processed) -->
-            <div class="doc-anchor-file" aria-hidden="true">
-              <div class="doc-file-top">
-                <div class="doc-file-id-badge">
-                  <span class="doc-file-badge">PDF</span>
-                  <span class="doc-file-name">INV-2041.pdf</span>
-                </div>
-                <div class="doc-file-live">
-                  <span class="doc-pulse-dot"></span>
-                  <span>AI Ingestion Active</span>
-                </div>
-              </div>
-              <div class="doc-file-meta-row">
-                <div class="doc-meta-col">
-                  <span class="doc-meta-lbl">SUPPLIER</span>
-                  <strong class="doc-meta-val">Acme Supplies Pty Ltd</strong>
-                </div>
-                <div class="doc-meta-col text-right">
-                  <span class="doc-meta-lbl">AMOUNT</span>
-                  <strong class="doc-meta-val">$4,820.00</strong>
-                </div>
-              </div>
-              <div class="doc-file-preview-lines">
-                <span class="doc-file-line l1"></span>
-                <span class="doc-file-line l2"></span>
-                <span class="doc-file-line l3"></span>
-                <span class="doc-file-line l4"></span>
-              </div>
-            </div>
-
-            <!-- Stage Cards emerging forward from the anchor file -->
-            <div class="workflow-stage-deck">
-              
-              <!-- Stage 1: Capture -->
-              <div class="pipe-stage is-active" data-stage="0">
-                <div class="pipe-stage-header">
-                  <span class="pipe-kicker">01 &middot; Capture</span>
-                  <span class="pipe-stage-tag">Multi-Channel Ingestion</span>
-                </div>
-                <h3 class="pipe-title">Invoices arrive from anywhere</h3>
-                <ul class="pipe-sources">
-                  <li><span class="pipe-src-icon mail" aria-hidden="true">@</span>Email attachment &middot; INV-2041.pdf</li>
-                  <li><span class="pipe-src-icon wa" aria-hidden="true">W</span>WhatsApp photo from the site manager</li>
-                  <li><span class="pipe-src-icon portal" aria-hidden="true">P</span>Supplier portal upload</li>
-                </ul>
-              </div>
-
-              <!-- Stage 2: Understand -->
-              <div class="pipe-stage" data-stage="1">
-                <div class="pipe-stage-header">
-                  <span class="pipe-kicker">02 &middot; Understand</span>
-                  <span class="pipe-stage-tag">Cognitive Extraction</span>
-                </div>
-                <h3 class="pipe-title">AI reads the fields, not just the text</h3>
-                <div class="pipe-doc" data-pipe-doc>
-                  <div><span>Supplier</span><b class="pipe-decode-val" data-final="Acme Supplies Pty Ltd">Acme Supplies Pty Ltd</b></div>
-                  <div><span>Invoice no.</span><b class="pipe-decode-val" data-final="INV-2041">INV-2041</b></div>
-                  <div><span>PO reference</span><b class="pipe-decode-val" data-final="PO-0778">PO-0778</b></div>
-                  <div><span>Total incl. GST</span><b class="pipe-decode-val" data-final="$4,820.00">$4,820.00</b></div>
-                  <div><span>Due</span><b class="pipe-decode-val" data-final="30 days">30 days</b></div>
-                  <div><span>Confidence</span><b class="pipe-decode-val ok" data-final="High">High (99.8%)</b></div>
+            <!-- FILE 1: CAPTURE -->
+            <article class="stack-file file-capture is-pos-0 is-front" data-file="capture" tabindex="0" role="region" aria-label="File 01: Capture">
+              <!-- Physical File Jacket with Top Protruding Tab -->
+              <div class="file-jacket">
+                <header class="file-jacket-tab">
+                  <div class="tab-index-badge">01</div>
+                  <span class="tab-label">CAPTURE</span>
+                  <span class="tab-pulse-indicator" aria-hidden="true"></span>
+                </header>
+                <div class="file-jacket-face">
+                  <div class="jacket-stamped-label">DOCUMENT INTAKE JACKET &middot; BATCH INV-2041</div>
+                  <div class="jacket-pocket-rim"></div>
                 </div>
               </div>
 
-              <!-- Stage 3: Validate -->
-              <div class="pipe-stage" data-stage="2">
-                <div class="pipe-stage-header">
-                  <span class="pipe-kicker">03 &middot; Validate</span>
-                  <span class="pipe-stage-tag">Automated Verification</span>
+              <!-- Content Sheet that physically emerges / pops out of the file jacket -->
+              <div class="file-emerging-sheet" id="sheetCapture">
+                <header class="sheet-doc-header">
+                  <div class="sheet-doc-title">
+                    <span class="sheet-doc-badge">STAGE 01</span>
+                    <h3 class="sheet-heading">Multi-Channel Ingestion</h3>
+                  </div>
+                  <span class="sheet-doc-tag">Raw Influx</span>
+                </header>
+
+                <div class="sheet-doc-body">
+                  <div class="file-pipeline-stream">
+                    <!-- Stream item 1: Email -->
+                    <div class="pipeline-item is-captured" data-step="email">
+                      <span class="pipeline-icon">@</span>
+                      <div class="pipeline-info">
+                        <strong>Email Ingestion</strong>
+                        <span>INV-2041.pdf &middot; Acme Supplies Pty Ltd</span>
+                      </div>
+                      <span class="pipeline-badge">Captured &check;</span>
+                    </div>
+                    <!-- Stream item 2: Document -->
+                    <div class="pipeline-item is-captured" data-step="doc">
+                      <span class="pipeline-icon">&#9634;</span>
+                      <div class="pipeline-info">
+                        <strong>Document Intake</strong>
+                        <span>Delivery docket scan &middot; Paper invoice</span>
+                      </div>
+                      <span class="pipeline-badge">Recognized &check;</span>
+                    </div>
+                    <!-- Stream item 3: Supplier -->
+                    <div class="pipeline-item is-captured" data-step="supplier">
+                      <span class="pipeline-icon">&#8644;</span>
+                      <div class="pipeline-info">
+                        <strong>Supplier Input</strong>
+                        <span>EDI gateway &middot; Automated XML stream</span>
+                      </div>
+                      <span class="pipeline-badge">Captured &check;</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 class="pipe-title">Checked before anyone has to look</h3>
-                <ul class="pipe-checks">
-                  <li><span>Matches purchase order PO-0778</span><b data-status="Pass">Pass &check;</b></li>
-                  <li><span>Goods receipt recorded</span><b data-status="Pass">Pass &check;</b></li>
-                  <li><span>Amount within tolerance</span><b data-status="Pass">Pass &check;</b></li>
-                  <li><span>Duplicate check</span><b data-status="None found">None found &check;</b></li>
-                </ul>
+
+                <footer class="sheet-doc-footer">
+                  <span class="sheet-cycle-hint">Incoming &rarr; Recognized &rarr; Captured</span>
+                  <span class="sheet-status-pill">Normalized into stream</span>
+                </footer>
+              </div>
+            </article>
+
+            <!-- FILE 2: UNDERSTAND -->
+            <article class="stack-file file-understand is-pos-1" data-file="understand" tabindex="0" role="region" aria-label="File 02: Understand">
+              <div class="file-jacket">
+                <header class="file-jacket-tab">
+                  <div class="tab-index-badge">02</div>
+                  <span class="tab-label">UNDERSTAND</span>
+                  <span class="tab-pulse-indicator" aria-hidden="true"></span>
+                </header>
+                <div class="file-jacket-face">
+                  <div class="jacket-stamped-label">COGNITIVE EXTRACTION &middot; SCHEMA MAPPING</div>
+                  <div class="jacket-pocket-rim"></div>
+                </div>
               </div>
 
-              <!-- Stage 4: Post -->
-              <div class="pipe-stage" data-stage="3">
-                <div class="pipe-stage-header">
-                  <span class="pipe-kicker">04 &middot; Post &amp; notify</span>
-                  <span class="pipe-stage-tag">Ledger &amp; Approver Sync</span>
+              <div class="file-emerging-sheet" id="sheetUnderstand">
+                <header class="sheet-doc-header">
+                  <div class="sheet-doc-title">
+                    <span class="sheet-doc-badge">STAGE 02</span>
+                    <h3 class="sheet-heading">AI Field Detection</h3>
+                  </div>
+                  <span class="sheet-doc-tag accent-tag">99.8% Conf</span>
+                </header>
+
+                <div class="sheet-doc-body">
+                  <div class="extracted-fields-grid">
+                    <div class="field-cell">
+                      <span class="field-k">Supplier</span>
+                      <strong class="field-v">Acme Supplies Pty Ltd</strong>
+                    </div>
+                    <div class="field-cell">
+                      <span class="field-k">Invoice No.</span>
+                      <strong class="field-v">INV-2041</strong>
+                    </div>
+                    <div class="field-cell">
+                      <span class="field-k">PO Reference</span>
+                      <strong class="field-v">PO-0778</strong>
+                    </div>
+                    <div class="field-cell">
+                      <span class="field-k">Total Amount</span>
+                      <strong class="field-v">$4,820.00</strong>
+                    </div>
+                    <div class="field-cell">
+                      <span class="field-k">Tax (GST 10%)</span>
+                      <strong class="field-v">$438.18</strong>
+                    </div>
+                    <div class="field-cell">
+                      <span class="field-k">Payment Terms</span>
+                      <strong class="field-v">30 Days Net</strong>
+                    </div>
+                  </div>
                 </div>
-                <h3 class="pipe-title">Posted to your books, team in the loop</h3>
-                <div class="pipe-posted">
-                  <div><span>Accounting</span><b>Bill created in Xero / MYOB</b></div>
-                  <div><span>Approval</span><b>Routed to finance manager</b></div>
+
+                <footer class="sheet-doc-footer">
+                  <span class="sheet-cycle-hint">Raw Information &rarr; Fields Detected &rarr; Structured</span>
+                  <span class="sheet-status-pill">Schema structured</span>
+                </footer>
+              </div>
+            </article>
+
+            <!-- FILE 3: VALIDATE -->
+            <article class="stack-file file-validate is-pos-2" data-file="validate" tabindex="0" role="region" aria-label="File 03: Validate">
+              <div class="file-jacket">
+                <header class="file-jacket-tab">
+                  <div class="tab-index-badge">03</div>
+                  <span class="tab-label">VALIDATE</span>
+                  <span class="tab-pulse-indicator" aria-hidden="true"></span>
+                </header>
+                <div class="file-jacket-face">
+                  <div class="jacket-stamped-label">POLICY &amp; LEDGER CHECKS &middot; 3-WAY MATCH</div>
+                  <div class="jacket-pocket-rim"></div>
                 </div>
-                <div class="pipe-toast"><span class="live-dot" aria-hidden="true"></span>Approver notified on Slack &middot; audit trail saved</div>
               </div>
 
-            </div>
-          </div>
+              <div class="file-emerging-sheet" id="sheetValidate">
+                <header class="sheet-doc-header">
+                  <div class="sheet-doc-title">
+                    <span class="sheet-doc-badge">STAGE 03</span>
+                    <h3 class="sheet-heading">Automated Verification</h3>
+                  </div>
+                  <span class="sheet-doc-tag pass-tag">All Passed &check;</span>
+                </header>
 
-          <!-- Benchmark Comparison Footer -->
-          <div class="pipe-compare">
-            <div class="pipe-metric manual"><span>Manual process</span><strong>4.8 hrs</strong></div>
-            <div class="pipe-metric auto"><span>With iKOREX</span><strong data-pipe-timer>0.4 s</strong></div>
+                <div class="sheet-doc-body">
+                  <div class="verification-checks-stack">
+                    <div class="verify-item is-pass">
+                      <div class="verify-info">
+                        <strong>Purchase Order Match</strong>
+                        <span>Matched to PO-0778 ($4,820.00)</span>
+                      </div>
+                      <span class="verify-badge">Pass &check;</span>
+                    </div>
+                    <div class="verify-item is-pass">
+                      <div class="verify-info">
+                        <strong>Goods Delivery Confirmation</strong>
+                        <span>Delivery docket verified &amp; signed</span>
+                      </div>
+                      <span class="verify-badge">Verified &check;</span>
+                    </div>
+                    <div class="verify-item is-pass">
+                      <div class="verify-info">
+                        <strong>Ledger Duplicate Scan</strong>
+                        <span>Checked across 12-month records</span>
+                      </div>
+                      <span class="verify-badge">Clean &check;</span>
+                    </div>
+                    <div class="verify-item is-pass">
+                      <div class="verify-info">
+                        <strong>Tolerance &amp; Tax Limits</strong>
+                        <span>0.00% variance against contract terms</span>
+                      </div>
+                      <span class="verify-badge">Pass &check;</span>
+                    </div>
+                  </div>
+                </div>
+
+                <footer class="sheet-doc-footer">
+                  <span class="sheet-cycle-hint">Checking &rarr; Matching &rarr; Verified</span>
+                  <span class="sheet-status-pill">Audit verified</span>
+                </footer>
+              </div>
+            </article>
+
+            <!-- FILE 4: POST / SYNC -->
+            <article class="stack-file file-post is-pos-3" data-file="post" tabindex="0" role="region" aria-label="File 04: Post &amp; Sync">
+              <div class="file-jacket">
+                <header class="file-jacket-tab">
+                  <div class="tab-index-badge">04</div>
+                  <span class="tab-label">POST / SYNC</span>
+                  <span class="tab-pulse-indicator" aria-hidden="true"></span>
+                </header>
+                <div class="file-jacket-face">
+                  <div class="jacket-stamped-label">LEDGER EXECUTION &middot; ENTERPRISE SYNC</div>
+                  <div class="jacket-pocket-rim"></div>
+                </div>
+              </div>
+
+              <div class="file-emerging-sheet" id="sheetPost">
+                <header class="sheet-doc-header">
+                  <div class="sheet-doc-title">
+                    <span class="sheet-doc-badge">STAGE 04</span>
+                    <h3 class="sheet-heading">ERP Posting &amp; Notify</h3>
+                  </div>
+                  <span class="sheet-doc-tag accent-tag">Instant &middot; 0.4s</span>
+                </header>
+
+                <div class="sheet-doc-body">
+                  <div class="sync-actions-stack">
+                    <div class="sync-item is-synced">
+                      <span class="sync-badge-icon">&check;</span>
+                      <div class="sync-details">
+                        <strong>ERP &amp; Accounting Post</strong>
+                        <span>Bill created in Xero / MYOB &middot; GL 6100</span>
+                      </div>
+                    </div>
+                    <div class="sync-item is-synced">
+                      <span class="sync-badge-icon">&check;</span>
+                      <div class="sync-details">
+                        <strong>Approval Sign-Off</strong>
+                        <span>Auto-approved within $5,000 corporate rule</span>
+                      </div>
+                    </div>
+                    <div class="sync-item is-synced">
+                      <span class="sync-badge-icon">&check;</span>
+                      <div class="sync-details">
+                        <strong>Ledger &amp; Audit Trail</strong>
+                        <span>Cryptographic CA-compliant audit record logged</span>
+                      </div>
+                    </div>
+                    <div class="sync-notify-bar">
+                      <span class="notify-ping"></span>
+                      <span>Slack notification dispatched &middot; Completed hands-free</span>
+                    </div>
+                  </div>
+                </div>
+
+                <footer class="sheet-doc-footer">
+                  <span class="sheet-cycle-hint">Verified &rarr; Posted &rarr; Synchronised</span>
+                  <span class="sheet-status-pill">Synchronised</span>
+                </footer>
+              </div>
+            </article>
+
           </div>
         </div>
       </div>
@@ -388,98 +533,166 @@
       <h2 class="section-title diag-title" data-viz>What's <span class="slow-word">slowing</span><br>your business down?</h2>
       <p class="section-subtitle">Explore the operational challenges we solve every day.</p>
 
-      <div class="diagnosis-grid">
-        <!-- Card 1 -->
-        <div class="diagnosis-card">
-          <div class="card-glow"></div>
+      <div class="diagnosis-grid asymmetric-grid">
+        <!-- Dominant Card: Manual Tasks -->
+        <article class="diagnosis-card is-dominant" data-diag-card="tasks">
           <div class="card-content">
             <span class="card-pretitle">INTELLIGENT PROCESS AUTOMATION</span>
-            <h3 class="card-title">Too Much Time Spent on Repetitive Tasks?</h3>
-            <p class="card-body">Manual data entry, invoice processing, approvals, payroll, procurement, and reporting
-              consume valuable hours and increase the risk of costly errors.</p>
+            <h3 class="card-title">Manual Tasks Drain Hours Every Week</h3>
+            <p class="card-body">Manual data entry, invoice processing, approvals, and reporting tie up your team in repetitive administration instead of high-value operations.</p>
           </div>
 
-          <div class="card-visual viz viz-tasks" data-viz>
-            <span class="viz-label">An example day</span>
-            <ul class="viz-task-list">
-              <li><span>Key invoices into Xero</span><span>45 min</span></li>
-              <li><span>Chase approvals by email</span><span>30 min</span></li>
-              <li><span>Update the stock sheet</span><span>25 min</span></li>
-              <li><span>Build the weekly report</span><span>40 min</span></li>
-            </ul>
-            <span class="viz-sweep" aria-hidden="true"></span>
-            <div class="viz-task-done">All four, automated <span>runs while you work</span></div>
-          </div>
-
-          <a href="services.html" class="card-link">Discover Process Automation <span class="arrow">→</span></a>
-        </div>
-        <!-- Card 2 -->
-        <div class="diagnosis-card">
-          <div class="card-glow"></div>
-          <div class="card-content">
-            <span class="card-pretitle">AI VISION & MONITORING</span>
-            <h3 class="card-title">Limited Visibility Into Your Operations?</h3>
-            <p class="card-body">Without real-time insights, safety risks, operational inefficiencies, and inventory
-              losses often go unnoticed until they become expensive problems.</p>
-          </div>
-
-          <div class="card-visual viz viz-floor" data-viz aria-hidden="true">
-            <div class="viz-floor-head">
-              <span class="viz-floor-label">Operational map &middot; live observability</span>
-              <span class="viz-floor-sync">Resolving</span>
+          <!-- Interactive Process Demonstration: Manual Accumulation -> Transform -->
+          <div class="proc-demo proc-tasks" data-proc="tasks">
+            <div class="proc-head">
+              <span class="proc-head-label">Operations Backlog &middot; 5 Manual Tasks</span>
+              <span class="proc-tag-state" data-state-badge>Manual Bottleneck</span>
             </div>
-            <div class="viz-telemetry-stack">
-              <div class="viz-telemetry-row t1">
-                <span class="viz-telemetry-node">Zone 01 &middot; Inventory</span>
-                <span class="viz-telemetry-state">Blind spot</span>
-                <span class="viz-telemetry-res">Connecting...</span>
+
+            <!-- Single surface level: flat rows with 1px hairline dividers -->
+            <div class="proc-stream-rows" id="taskRowsContainer">
+              <div class="proc-row" data-task-row="0">
+                <span class="proc-row-name">Email Inbox</span>
+                <span class="proc-row-meta">Chasing supplier attachments</span>
+                <span class="proc-row-status is-manual">Queued</span>
               </div>
-              <div class="viz-telemetry-row t2">
-                <span class="viz-telemetry-node">Zone 02 &middot; Workflows</span>
-                <span class="viz-telemetry-state">Fragmented</span>
-                <span class="viz-telemetry-res ok">Mapped &check;</span>
+              <div class="proc-row" data-task-row="1">
+                <span class="proc-row-name">Data Entry</span>
+                <span class="proc-row-meta">Manual re-keying into accounting</span>
+                <span class="proc-row-status is-manual">Lagging</span>
               </div>
-              <div class="viz-telemetry-row t3">
-                <span class="viz-telemetry-node">Zone 03 &middot; Floor operations</span>
-                <span class="viz-telemetry-state">Telemetry linked</span>
-                <span class="viz-telemetry-res ok">Verified &check;</span>
+              <div class="proc-row" data-task-row="2">
+                <span class="proc-row-name">Checking</span>
+                <span class="proc-row-meta">Cross-referencing line totals</span>
+                <span class="proc-row-status is-manual">Manual</span>
+              </div>
+              <div class="proc-row" data-task-row="3">
+                <span class="proc-row-name">Approval</span>
+                <span class="proc-row-meta">Waiting for manager email signoff</span>
+                <span class="proc-row-status is-manual">Pending</span>
+              </div>
+              <div class="proc-row" data-task-row="4">
+                <span class="proc-row-name">Reconciliation</span>
+                <span class="proc-row-meta">Balancing ledger statements</span>
+                <span class="proc-row-status is-manual">Delayed</span>
               </div>
             </div>
-            <div class="viz-alert"><strong>Full operational visibility</strong><span>All dependencies discovered &middot; 100% active</span></div>
-          </div>
 
-          <a href="solutions.html#loss-prevention" class="card-link">Explore AI Vision Solutions <span class="arrow">→</span></a>
-        </div>
-        <!-- Card 3 -->
-        <div class="diagnosis-card">
-          <div class="card-glow"></div>
-          <div class="card-content">
-            <span class="card-pretitle">AI FINANCIAL INTELLIGENCE</span>
-            <h3 class="card-title">Still Waiting Days for Financial Insights?</h3>
-            <p class="card-body">Manual reconciliation, reporting, and financial analysis slow decision-making and make
-              it harder to stay ahead.</p>
-          </div>
+            <!-- Resolved Unified Row: Capture -> Understand -> Validate -> Execute -->
+            <div class="proc-resolved-banner" id="taskResolvedBanner" aria-live="polite">
+              <div class="resolved-icon" aria-hidden="true">&check;</div>
+              <div class="resolved-info">
+                <strong>Capture &rarr; Understand &rarr; Validate &rarr; Execute</strong>
+                <span>All 5 tasks transformed into one continuous automated flow</span>
+              </div>
+              <span class="resolved-pill">0.4s Instant</span>
+            </div>
 
-          <div class="card-visual viz viz-books" data-viz>
-            <div class="viz-books-head"><span class="viz-label">Cash position</span><span class="viz-live">Updated just now</span></div>
-            <svg class="viz-spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M0 58 L40 52 L80 54 L120 38 L160 42 L200 26 L240 30 L300 10" />
-            </svg>
-            <div class="viz-feed">
-              <ul class="viz-feed-list">
-                <li><span>Bank feed &middot; Supplier payment</span><b>Matched</b></li>
-                <li><span>Bank feed &middot; Customer receipt</span><b>Matched</b></li>
-                <li><span>Bank feed &middot; Payroll</span><b>Matched</b></li>
-                <li><span>Bank feed &middot; Card fees</span><b class="review">Review</b></li>
-                <li aria-hidden="true"><span>Bank feed &middot; Supplier payment</span><b>Matched</b></li>
-                <li aria-hidden="true"><span>Bank feed &middot; Customer receipt</span><b>Matched</b></li>
-                <li aria-hidden="true"><span>Bank feed &middot; Payroll</span><b>Matched</b></li>
-                <li aria-hidden="true"><span>Bank feed &middot; Card fees</span><b class="review">Review</b></li>
-              </ul>
+            <div class="proc-caption">
+              <span class="proc-subtext">Scroll or hover to resolve &middot; Example scenario</span>
+              <span class="proc-time-delta"><strong>2.8 hrs bottleneck</strong> &rarr; <strong>0.4s hands-free</strong></span>
             </div>
           </div>
 
-          <a href="solutions.html#finance" class="card-link">See Financial Automation <span class="arrow">→</span></a>
+          <a href="services.html" class="card-link">Discover Process Automation <span class="arrow">&rarr;</span></a>
+        </article>
+
+        <!-- Supporting Column (Stacked Cards 2 & 3) -->
+        <div class="diagnosis-supporting-col">
+          <!-- Card 2: Fragmented Information (Disconnected -> Connected) -->
+          <article class="diagnosis-card is-supporting" data-diag-card="blindspots">
+            <div class="card-content">
+              <span class="card-pretitle">INTELLIGENT PROCESS AUTOMATION</span>
+              <h3 class="card-title">Fragmented Information Slows Execution</h3>
+              <p class="card-body">When sources exist separately across inboxes, spreadsheets, and databases, errors multiply. iKOREX unifies them into a single connected workflow.</p>
+            </div>
+
+            <div class="proc-demo proc-telemetry" data-proc="telemetry">
+              <div class="proc-head">
+                <span class="proc-head-label">Information Architecture &middot; 5 Sources</span>
+                <span class="proc-tag-state" data-telemetry-badge>Connected &check;</span>
+              </div>
+
+              <div class="proc-stream-rows" id="fragmentedRows">
+                <div class="proc-row" data-source-row="0">
+                  <span class="proc-row-name">Email Inbox</span>
+                  <span class="proc-row-meta">PDF attachments &middot; Unlinked</span>
+                  <span class="proc-row-status is-connected" data-src-status="0">Connected &check;</span>
+                </div>
+                <div class="proc-row" data-source-row="1">
+                  <span class="proc-row-name">PDF Scans</span>
+                  <span class="proc-row-meta">Warehouse delivery dockets</span>
+                  <span class="proc-row-status is-connected" data-src-status="1">Connected &check;</span>
+                </div>
+                <div class="proc-row" data-source-row="2">
+                  <span class="proc-row-name">Spreadsheets</span>
+                  <span class="proc-row-meta">Isolated inventory sheets</span>
+                  <span class="proc-row-status is-connected" data-src-status="2">Connected &check;</span>
+                </div>
+                <div class="proc-row" data-source-row="3">
+                  <span class="proc-row-name">ERP System</span>
+                  <span class="proc-row-meta">Xero / MYOB accounting</span>
+                  <span class="proc-row-status is-connected" data-src-status="3">Connected &check;</span>
+                </div>
+                <div class="proc-row" data-source-row="4">
+                  <span class="proc-row-name">Approval Thread</span>
+                  <span class="proc-row-meta">Manager signoff route</span>
+                  <span class="proc-row-status is-connected" data-src-status="4">Connected &check;</span>
+                </div>
+              </div>
+
+              <div class="proc-caption">
+                <span class="proc-subtext">Disconnected &rarr; Connected &rarr; Unified Workflow</span>
+              </div>
+            </div>
+
+            <a href="solutions.html#loss-prevention" class="card-link">Explore Unified Integrations <span class="arrow">&rarr;</span></a>
+          </article>
+
+          <!-- Card 3: Financial Section — Transaction Processing System -->
+          <article class="diagnosis-card is-supporting" data-diag-card="financial">
+            <div class="card-content">
+              <span class="card-pretitle">INTELLIGENT PROCESS AUTOMATION</span>
+              <h3 class="card-title">Real-Time Financial Transaction Pipeline</h3>
+              <p class="card-body">Transactions enter and progress stage-by-stage through matching, validation, and reconciliation, resolving exceptions before posting.</p>
+            </div>
+
+            <div class="proc-demo proc-finance" data-proc="finance">
+              <div class="proc-head">
+                <span class="proc-head-label">Live Transaction Feed &middot; INV-2041 ($4,820.00)</span>
+                <span class="proc-tag-state">Verified &check;</span>
+              </div>
+
+              <div class="proc-stream-rows" id="financialPipelineRows">
+                <div class="proc-row is-active" data-stage="match">
+                  <span class="proc-row-name">1. MATCH</span>
+                  <span class="proc-row-meta">Matched against PO-0778</span>
+                  <span class="proc-row-status is-matched">Matched &check;</span>
+                </div>
+                <div class="proc-row is-active" data-stage="validate">
+                  <span class="proc-row-name">2. VALIDATE</span>
+                  <span class="proc-row-meta">GST 10% &amp; tolerance limit confirmed</span>
+                  <span class="proc-row-status is-matched">Validated &check;</span>
+                </div>
+                <div class="proc-row is-active" data-stage="reconcile">
+                  <span class="proc-row-name">3. RECONCILE</span>
+                  <span class="proc-row-meta">Bank feed transaction paired</span>
+                  <span class="proc-row-status is-matched">Reconciled &check;</span>
+                </div>
+                <div class="proc-row is-active" data-stage="verified">
+                  <span class="proc-row-name">4. VERIFIED</span>
+                  <span class="proc-row-meta">Immutable CA-compliant ledger audit</span>
+                  <span class="proc-row-status is-matched">Verified &check;</span>
+                </div>
+              </div>
+
+              <div class="proc-caption">
+                <span class="proc-subtext">Match &rarr; Validate &rarr; Reconcile &rarr; Verified</span>
+              </div>
+            </div>
+
+            <a href="solutions.html#finance" class="card-link">See Financial Automation <span class="arrow">&rarr;</span></a>
+          </article>
         </div>
       </div>
     </div>
@@ -549,27 +762,27 @@
 
           <!-- Mockup Visual 1: Manual Data Queue -->
           <div class="comparison-visual mockup-visual manual-mockup">
-            <div class="queue-card">
+            <div class="queue-card" id="manualQueueCard">
               <div class="queue-header">
                 <span class="queue-title">Data Entry Queue</span>
-                <span class="queue-count">3 pending</span>
+                <span class="queue-count" id="manualQueueCount">3 pending</span>
               </div>
-              <div class="queue-list">
-                <div class="queue-row error">
+              <div class="queue-list" id="manualQueueList">
+                <div class="queue-row error" data-manual-row="0">
                   <div class="row-info">
                     <span class="row-name">Invoice #2041A</span>
                     <span class="row-details">Manual OCR correction</span>
                   </div>
                   <span class="row-pill error">Data Error</span>
                 </div>
-                <div class="queue-row delayed">
+                <div class="queue-row delayed" data-manual-row="1">
                   <div class="row-info">
                     <span class="row-name">Supplier Contract</span>
                     <span class="row-details">Awaiting manager signoff</span>
                   </div>
                   <span class="row-pill warning">Pending 4h</span>
                 </div>
-                <div class="queue-row pending">
+                <div class="queue-row pending" data-manual-row="2">
                   <div class="row-info">
                     <span class="row-name">Monthly Report Gen</span>
                     <span class="row-details">Exporting CSV from Xero</span>
@@ -580,8 +793,8 @@
             </div>
 
             <!-- Warning stat overlay -->
-            <div class="metric-overlay warning-border animate-float">
-              <span class="metric-val text-red">4.8 Hours</span>
+            <div class="metric-overlay warning-border animate-float" id="manualMetricOverlay">
+              <span class="metric-val text-red" id="manualMetricVal">4.8 Hours</span>
               <span class="metric-lbl">Avg. process time</span>
             </div>
             <div class="visual-label text-red">Manual processes. Delayed decisions. Higher costs.</div>
@@ -636,10 +849,10 @@
 
           <!-- Mockup Visual 2: Automated Pipeline Flow -->
           <div class="comparison-visual mockup-visual automated-mockup">
-            <div class="pipeline-card">
-              <div class="pipeline-nodes">
+            <div class="pipeline-card" id="autoPipelineCard">
+              <div class="pipeline-nodes" id="autoPipelineNodes">
                 <!-- Step 1 -->
-                <div class="pipeline-step active">
+                <div class="pipeline-step active" data-pipeline-step="0">
                   <div class="step-icon-bg">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
                       stroke-linecap="round" stroke-linejoin="round">
@@ -651,12 +864,12 @@
                 </div>
 
                 <!-- Connector -->
-                <div class="pipeline-connector">
+                <div class="pipeline-connector" data-connector="0">
                   <div class="glow-signal"></div>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="pipeline-step active">
+                <div class="pipeline-step" data-pipeline-step="1">
                   <div class="step-icon-bg parse">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
                       stroke-linecap="round" stroke-linejoin="round">
@@ -670,12 +883,12 @@
                 </div>
 
                 <!-- Connector -->
-                <div class="pipeline-connector">
+                <div class="pipeline-connector" data-connector="1">
                   <div class="glow-signal delay"></div>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="pipeline-step success">
+                <div class="pipeline-step" data-pipeline-step="2">
                   <div class="step-icon-bg check">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"
                       stroke-linecap="round" stroke-linejoin="round">
@@ -688,10 +901,10 @@
 
               <div class="pipeline-performance">
                 <div class="perf-stat">
-                  <span class="perf-val text-green">100%</span>
+                  <span class="perf-val text-green" id="autoAccuracyVal">100%</span>
                   <span class="perf-lbl">Accuracy</span>
                 </div>
-                <div class="perf-bars">
+                <div class="perf-bars" id="autoPerfBars">
                   <span style="--bh: 30%"></span>
                   <span style="--bh: 60%"></span>
                   <span style="--bh: 80%"></span>
@@ -701,8 +914,8 @@
             </div>
 
             <!-- Success stat overlay -->
-            <div class="metric-overlay success-border animate-float delay-1">
-              <span class="metric-val text-green">3.2 Secs</span>
+            <div class="metric-overlay success-border animate-float delay-1" id="autoMetricOverlay">
+              <span class="metric-val text-green" id="autoMetricVal">3.2 Secs</span>
               <span class="metric-lbl">Total run time</span>
             </div>
             <div class="visual-label text-green">Automated workflows. Faster decisions. Better business outcomes.</div>
@@ -869,6 +1082,7 @@
 
   <!-- Capabilities Section -->
   <section class="capabilities-section" id="capabilities">
+    <canvas class="capabilities-network-canvas" id="capabilitiesNetworkCanvas" aria-hidden="true"></canvas>
     <div class="section-container">
       <div class="custom-badge">
         <span class="badge-icon-wrapper">
@@ -877,91 +1091,157 @@
             <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="url(#logo-icon-grad-bottom)" />
           </svg>
         </span>
-        <span class="badge-text">Why iKOREX</span>
+        <span class="badge-text">Architecture &amp; Capabilities</span>
       </div>
-      <h2 class="section-title">Business Expertise. Intelligent Automation. Measurable Results.</h2>
-      <p class="section-subtitle">Built around how your business actually runs.</p>
+      <h2 class="section-title capabilities-title" id="capabilitiesTitle">
+        <span class="cap-title-line"><span class="cap-title-inner">Enterprise Automation</span></span>
+        <span class="cap-title-line"><span class="cap-title-inner">Built for <span class="cap-title-accent">Real Operations</span></span></span>
+      </h2>
+      <p class="section-subtitle">Deep industry workflows, financial accuracy, and measurable velocity in one integrated engine.</p>
 
-      <div class="capabilities-grid">
-        <!-- Bento Card 1: Industry Experience (span-6) -->
-        <div class="capability-card span-6">
-          <h3 class="capability-title">Deep Industry Experience</h3>
-          <p class="capability-body">Built by professionals who understand business operations and the challenges that
-            slow them down. We identify where automation delivers the greatest impact.</p>
-          <div class="card-visual-compact viz viz-orbit" data-viz aria-hidden="true">
-            <div class="viz-orbit-ring">
-              <span class="viz-orbit-chip c1"><span>Retail</span></span>
-              <span class="viz-orbit-chip c2"><span>Manufacturing</span></span>
-              <span class="viz-orbit-chip c3"><span>Healthcare</span></span>
-              <span class="viz-orbit-chip c4"><span>Hospitality</span></span>
-              <span class="viz-orbit-chip c5"><span>Banking</span></span>
+      <div class="bento-showcase-grid" data-bento-grid>
+        <!-- Bento Card 1: Industry Architecture (Span 7) -->
+        <div class="capability-card bento-card bento-span-7 bento-industry-card" data-bento-depth="1">
+          <div class="bento-card-content">
+            <div class="bento-badge">Multi-Sector Architecture</div>
+            <h3 class="capability-title">Deep Industry Experience &amp; Routing</h3>
+            <p class="capability-body">Pre-configured automation engines tailored for sector-specific rules, regulatory standards, and core ERP integrations.</p>
+          </div>
+
+          <!-- Structural Branching Architecture Visual: One Core Engine branching into 5 sectors -->
+          <div class="card-visual-compact viz viz-industry-branch" data-viz aria-label="One Core Automation Engine Structural Branching">
+            <div class="industry-nav-pills" role="tablist" aria-label="Industry engine modes">
+              <button class="ind-pill is-active" type="button" data-ind="retail">Retail</button>
+              <button class="ind-pill" type="button" data-ind="mfg">Manufacturing</button>
+              <button class="ind-pill" type="button" data-ind="health">Healthcare</button>
+              <button class="ind-pill" type="button" data-ind="hosp">Hospitality</button>
+              <button class="ind-pill" type="button" data-ind="finance">Finance</button>
             </div>
-            <div class="viz-orbit-core">iKOREX</div>
+
+            <div class="ind-branch-tree">
+              <div class="branch-core">
+                <span class="branch-core-badge">CENTRAL ENGINE</span>
+                <strong class="branch-core-title">iKOREX Core Automation</strong>
+              </div>
+              <div class="branch-tree-stalk" aria-hidden="true"></div>
+              <div class="branch-sectors-grid">
+                <div class="branch-sector is-active" data-sector="retail">
+                  <span class="sector-tag">Retail</span>
+                  <span class="sector-dest">Shopify &middot; POS &middot; Inventory &check;</span>
+                </div>
+                <div class="branch-sector" data-sector="mfg">
+                  <span class="sector-tag">Manufacturing</span>
+                  <span class="sector-dest">BOM &middot; Job Costing &middot; EDI &check;</span>
+                </div>
+                <div class="branch-sector" data-sector="health">
+                  <span class="sector-tag">Healthcare</span>
+                  <span class="sector-dest">Patient Billing &middot; Audits &check;</span>
+                </div>
+                <div class="branch-sector" data-sector="hosp">
+                  <span class="sector-tag">Hospitality</span>
+                  <span class="sector-dest">Supplier Dockets &middot; Rosters &check;</span>
+                </div>
+                <div class="branch-sector" data-sector="finance">
+                  <span class="sector-tag">Finance</span>
+                  <span class="sector-dest">Xero &middot; MYOB &middot; Trust Ledger &check;</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Bento Card 2: Financial Workflows (span-6) -->
-        <div class="capability-card span-6">
-          <h3 class="capability-title">Financial Workflows You Can Trust</h3>
-          <p class="capability-body">Built by a team that includes qualified Chartered Accountants, with accuracy and
-            compliance designed into every step of the process.</p>
+        <!-- Bento Card 2: Financial Workflows & CA Audit (Span 5) -->
+        <div class="capability-card bento-card bento-span-5 bento-finance-card" data-bento-depth="2">
+          <div class="bento-card-content">
+            <div class="bento-badge">CA-Designed Governance</div>
+            <h3 class="capability-title">Financial Workflows You Can Trust</h3>
+            <p class="capability-body">Designed alongside Chartered Accountants with immutable audit trails and 3-way validation.</p>
+          </div>
+
           <div class="card-visual-compact viz viz-audit" data-viz aria-hidden="true">
-            <span class="viz-audit-title">Audit trail</span>
-            <span class="viz-audit-line"><b>09:02</b> INV-2041 matched to PO-0778 <i>&#10003;</i></span>
-            <span class="viz-audit-line"><b>09:02</b> GST validated <i>&#10003;</i></span>
-            <span class="viz-audit-line"><b>09:03</b> Approval routed to finance</span>
-            <span class="viz-audit-line"><b>09:07</b> Approved &middot; posted to ledger <i>&#10003;</i></span>
+            <div class="viz-audit-header">
+              <span class="viz-audit-title">Live Audit Log &middot; Immutable</span>
+              <span class="viz-audit-status">100% Verified</span>
+            </div>
+            <div class="viz-audit-stack" id="liveAuditStack">
+              <span class="viz-audit-line"><b>09:02:14</b> PO-0778 3-way match verified <i>&check;</i></span>
+              <span class="viz-audit-line"><b>09:02:15</b> GST &amp; tax split calculated <i>&check;</i></span>
+              <span class="viz-audit-line"><b>09:02:18</b> Approver alert dispatched <i>&check;</i></span>
+              <span class="viz-audit-line"><b>09:02:19</b> GL Account 6100-AP posted <i>&check;</i></span>
+            </div>
           </div>
         </div>
 
-        <!-- Bento Card 3: Business-First (span-4) -->
-        <div class="capability-card span-4">
-          <h3 class="capability-title">Business-First Automation</h3>
-          <p class="capability-body">Every solution is tailored to your workflows, goals, and challenges because no two
-            businesses operate the same way.</p>
+        <!-- Bento Card 3: Business-First Friction Elimination (Span 4) -->
+        <div class="capability-card bento-card bento-span-4 bento-waste-card" data-bento-depth="3">
+          <div class="bento-card-content">
+            <div class="bento-badge">Friction Removal</div>
+            <h3 class="capability-title">Zero-Friction Streamlining</h3>
+            <p class="capability-body">Manual bottleneck steps dynamically collapse into instant zero-touch execution.</p>
+          </div>
           <div class="card-visual-compact viz viz-waste" data-viz aria-hidden="true">
-            <span class="viz-step">Order received</span>
-            <span class="viz-step waste">Re-key into spreadsheet</span>
-            <span class="viz-step">Invoice generated</span>
-            <span class="viz-step waste">Email PDF, wait for reply</span>
-            <span class="viz-step">Payment reconciled</span>
+            <div class="waste-flow-stages" id="wasteFlowStages">
+              <div class="waste-step step-kept">
+                <span class="step-badge">1</span>
+                <span class="step-name">Order Intake</span>
+                <span class="step-tag">Active</span>
+              </div>
+              <div class="waste-step step-redundant">
+                <span class="step-badge">&times;</span>
+                <span class="step-name">Manual Re-Keying</span>
+                <span class="step-tag redundant-tag">Redundancy Eliminated</span>
+              </div>
+              <div class="waste-step step-redundant">
+                <span class="step-badge">&times;</span>
+                <span class="step-name">Email Chasing</span>
+                <span class="step-tag redundant-tag">Redundancy Eliminated</span>
+              </div>
+              <div class="waste-step step-merged">
+                <span class="step-badge">&check;</span>
+                <span class="step-name">One Streamlined Flow</span>
+                <span class="step-tag auto-tag">0.4s Hands-Free</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Bento Card 4: Measurable Results (span-4) -->
-        <div class="capability-card span-4">
-          <h3 class="capability-title">Built for Measurable Results</h3>
-          <p class="capability-body">Every automation is designed to deliver measurable improvements in productivity,
-            efficiency, and operating costs.</p>
+        <!-- Bento Card 4: Measurable Results Velocity Curve (Span 4) -->
+        <div class="capability-card bento-card bento-span-4 bento-velocity-card" data-bento-depth="2">
+          <div class="bento-card-content">
+            <div class="bento-badge">Compounding ROI</div>
+            <h3 class="capability-title">Built for Measurable Velocity</h3>
+            <p class="capability-body">Efficiency compounds week-over-week, returning hundreds of hours to your team.</p>
+          </div>
           <div class="card-visual-compact viz viz-results" data-viz aria-hidden="true">
-            <span class="viz-label">Hours saved per week</span>
-            <svg viewBox="0 0 260 110" preserveAspectRatio="none">
-              <line x1="0" y1="104" x2="260" y2="104" />
-              <path class="viz-results-line" d="M0 98 L40 92 L80 80 L120 64 L160 48 L200 34 L260 14" />
+            <div class="viz-results-head">
+              <span class="viz-label">Cumulative Hours Saved</span>
+              <strong class="viz-highlight">+120 hrs / mo</strong>
+            </div>
+            <svg viewBox="0 0 260 100" preserveAspectRatio="none">
+              <line x1="0" y1="94" x2="260" y2="94" />
+              <path class="viz-results-line" id="bentoVelocityPath" d="M0 90 L40 82 L80 68 L120 50 L160 34 L200 20 L260 8" />
             </svg>
-            <span class="viz-results-chip">Tracked from week one</span>
+            <span class="viz-results-chip">Tracked in real time</span>
           </div>
         </div>
 
-        <!-- Bento Column 5: cited industry insights (span-4) -->
-        <div class="stats-bento-card">
+        <!-- Bento Card 5: Cited Industry Economic Benchmarks (Span 4) -->
+        <div class="capability-card bento-card bento-span-4 bento-insight-card" data-bento-depth="1">
+          <div class="bento-card-content">
+            <div class="bento-badge">Economic Benchmark</div>
+            <h3 class="capability-title">70% Operational Savings</h3>
+          </div>
           <div class="stat-card-compact insight-card viz" data-viz>
-            <span class="insight-label">Cost to process one invoice</span>
+            <span class="insight-label">Cost per invoice</span>
             <div class="insight-figures"><s>$9.40</s><strong>$2.78</strong></div>
             <div class="insight-bars" aria-hidden="true"><span class="bar-old"></span><span class="bar-new"></span></div>
-            <p>Average accounts payable team vs best-in-class automated teams: about 70% less.</p>
-            <span class="insight-source">Source: Ardent Partners, AP Metrics That Matter in 2025 (USD)</span>
-          </div>
-          <div class="stat-card-compact insight-card viz" data-viz>
-            <span class="insight-label">Invoice cycle time</span>
+            <span class="insight-label" style="margin-top: 6px;">Processing cycle time</span>
             <div class="insight-figures"><s>9.2</s><strong>3.1 days</strong></div>
-            <div class="insight-bars" aria-hidden="true"><span class="bar-old"></span><span class="bar-new short"></span></div>
-            <p>End to end, the average invoice takes 9.2 days. Best-in-class teams finish in 3.1.</p>
-            <span class="insight-source">Source: Ardent Partners, AP Metrics That Matter in 2025</span>
+            <span class="insight-source">Source: Ardent Partners AP Metrics</span>
           </div>
         </div>
       </div>
-      <p class="footnote">Industry figures are cited from third-party research. Your own outcomes vary by process complexity and current baseline, and are scoped during discovery.</p>
+      <p class="footnote">Industry figures are cited from third-party research. Specific enterprise outcomes vary by baseline process volume and are measured during discovery.</p>
     </div>
   </section>
   <!-- Blog / Insights Section -->
@@ -979,61 +1259,74 @@
       <h2 class="section-title">Latest insights on intelligent automation</h2>
       <p class="section-subtitle">Practical thinking on where automation and AI actually pay off.</p>
 
-      <div class="blog-grid">
-        <!-- Blog Card 1 -->
-        <article class="blog-card">
+      <div class="blog-grid asymmetric-blog-grid">
+        <!-- Featured Article 1 (Large Card: Image Left, Text Right) -->
+        <article class="blog-card is-featured">
           <a href="blog-detail.html" class="blog-card-link">
             <div class="blog-card-img-wrap">
               <img src="assets/images/blog-operational-cost.webp"
                 alt="The Smallest Tasks Can Become Your Biggest Operational Cost" class="blog-card-img" loading="lazy">
+              <div class="blog-img-tint" aria-hidden="true"></div>
             </div>
             <div class="blog-card-content">
+              <span class="blog-card-category">PROCESS ECONOMICS</span>
               <div class="blog-card-meta">
                 <span class="blog-card-date">January 15, 2025</span>
                 <span class="blog-card-separator">&bull;</span>
                 <span class="blog-card-read">6 min read</span>
               </div>
               <h3 class="blog-card-title">The Smallest Tasks Can Become Your Biggest Operational Cost</h3>
+              <p class="blog-card-excerpt">How low-visibility manual data entry, approvals, and status tracking compound silently into significant enterprise overhead.</p>
+              <span class="blog-card-action">Read insight <span class="arrow" aria-hidden="true">&rarr;</span></span>
             </div>
           </a>
         </article>
 
-        <!-- Blog Card 2 -->
-        <article class="blog-card">
-          <a href="blog-detail-2.html" class="blog-card-link">
-            <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-ai-decision.webp" alt="Before You Add AI to a Workflow, Ask One Question"
-                class="blog-card-img" loading="lazy">
-            </div>
-            <div class="blog-card-content">
-              <div class="blog-card-meta">
-                <span class="blog-card-date">January 20, 2025</span>
-                <span class="blog-card-separator">&bull;</span>
-                <span class="blog-card-read">5 min read</span>
+        <!-- Supporting Articles Grid (Cards 2 & 3) -->
+        <div class="blog-supporting-row">
+          <!-- Article 2 -->
+          <article class="blog-card is-supporting">
+            <a href="blog-detail-2.html" class="blog-card-link">
+              <div class="blog-card-img-wrap">
+                <img src="assets/images/blog-ai-decision.webp" alt="Before You Add AI to a Workflow, Ask One Question"
+                  class="blog-card-img" loading="lazy">
+                <div class="blog-img-tint" aria-hidden="true"></div>
               </div>
-              <h3 class="blog-card-title">Before You Add AI to a Workflow, Ask One Question</h3>
-            </div>
-          </a>
-        </article>
+              <div class="blog-card-content">
+                <span class="blog-card-category">AI WORKFLOWS</span>
+                <div class="blog-card-meta">
+                  <span class="blog-card-date">January 20, 2025</span>
+                  <span class="blog-card-separator">&bull;</span>
+                  <span class="blog-card-read">5 min read</span>
+                </div>
+                <h3 class="blog-card-title">Before You Add AI to a Workflow, Ask One Question</h3>
+                <span class="blog-card-action">Read insight <span class="arrow" aria-hidden="true">&rarr;</span></span>
+              </div>
+            </a>
+          </article>
 
-        <!-- Blog Card 3 -->
-        <article class="blog-card">
-          <a href="blog-detail-3.html" class="blog-card-link">
-            <div class="blog-card-img-wrap">
-              <img src="assets/images/blog-connected-workflows.webp"
-                alt="AI Alone Won't Transform Your Business. Connected Workflows Will." class="blog-card-img"
-                loading="lazy">
-            </div>
-            <div class="blog-card-content">
-              <div class="blog-card-meta">
-                <span class="blog-card-date">January 25, 2025</span>
-                <span class="blog-card-separator">&bull;</span>
-                <span class="blog-card-read">6 min read</span>
+          <!-- Article 3 -->
+          <article class="blog-card is-supporting">
+            <a href="blog-detail-3.html" class="blog-card-link">
+              <div class="blog-card-img-wrap">
+                <img src="assets/images/blog-connected-workflows.webp"
+                  alt="AI Alone Won't Transform Your Business. Connected Workflows Will." class="blog-card-img"
+                  loading="lazy">
+                <div class="blog-img-tint" aria-hidden="true"></div>
               </div>
-              <h3 class="blog-card-title">AI Alone Won't Transform Your Business. Connected Workflows Will.</h3>
-            </div>
-          </a>
-        </article>
+              <div class="blog-card-content">
+                <span class="blog-card-category">ENTERPRISE ARCHITECTURE</span>
+                <div class="blog-card-meta">
+                  <span class="blog-card-date">January 25, 2025</span>
+                  <span class="blog-card-separator">&bull;</span>
+                  <span class="blog-card-read">6 min read</span>
+                </div>
+                <h3 class="blog-card-title">AI Alone Won't Transform Your Business. Connected Workflows Will.</h3>
+                <span class="blog-card-action">Read insight <span class="arrow" aria-hidden="true">&rarr;</span></span>
+              </div>
+            </a>
+          </article>
+        </div>
       </div>
       <div class="section-more">
         <a href="blog.html" class="btn btn-outline">View all articles <span class="arrow" aria-hidden="true">&rarr;</span></a>
@@ -1149,7 +1442,7 @@
   </footer>
 
   <!-- Custom Logic Script -->
-  <script src="main.js?v=6"></script>
+  <script src="main.js?v=7"></script>
 </body>
 
 </html>

@@ -136,111 +136,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Pure object-level response: no mouse-following cursor spotlights.
   // Surface material contrast and edges respond when hovered via CSS transitions.
 
-  // --- 3. Interactive Automation Console Simulation ---
-  const consoleTimer = document.getElementById('consoleTimer');
-  const consoleRow1 = document.getElementById('consoleRow1');
-  const consoleCheckRow1 = consoleRow1 ? consoleRow1.querySelector('.console-check-icon') : null;
-
-  const consoleQueue = document.getElementById('consoleQueue');
-  const consoleQueueCheck = document.getElementById('consoleQueueCheck');
-
-  // Simulated Processing States for Invoice Batch (Row 1)
-  let processingInterval;
-  function startInvoiceSimulation() {
-    if (!consoleTimer || !consoleCheckRow1) return;
-    
-    let time = 4.2;
-    consoleCheckRow1.classList.remove('active');
-    consoleTimer.style.color = 'var(--text-muted)';
-    consoleTimer.textContent = '4.2s';
-    
-    // Simulate countdown processing
-    clearInterval(processingInterval);
-    processingInterval = setInterval(() => {
-      time -= 0.1;
-      if (time <= 0) {
-        time = 0.0;
-        clearInterval(processingInterval);
-        consoleCheckRow1.classList.add('active');
-        consoleTimer.style.color = 'var(--accent-green)';
-        consoleTimer.textContent = '4.2s'; // Keep final duration
-        
-        // Wait 5 seconds and restart simulation loop
-        setTimeout(startInvoiceSimulation, 5000);
-      } else {
-        consoleTimer.textContent = `${time.toFixed(1)}s`;
-      }
-    }, 100);
-  }
-
-  // Simulated Live Data Queue (Row 3)
-  let queueInterval;
-  function startQueueSimulation() {
-    if (!consoleQueue || !consoleQueueCheck) return;
-
-    let itemsPending = Math.floor(Math.random() * 40) + 50; // Random starting queue size
-    consoleQueueCheck.classList.remove('active');
-    consoleQueue.classList.remove('success');
-    consoleQueue.classList.add('pending');
-    consoleQueue.textContent = `${itemsPending} pending`;
-
-    clearInterval(queueInterval);
-    queueInterval = setInterval(() => {
-      const processingStep = Math.floor(Math.random() * 5) + 3;
-      itemsPending -= processingStep;
-
-      if (itemsPending <= 0) {
-        itemsPending = 0;
-        clearInterval(queueInterval);
-        consoleQueue.textContent = '0 pending';
-        consoleQueue.classList.remove('pending');
-        consoleQueue.classList.add('success');
-        consoleQueue.textContent = '0 pending';
-        consoleQueueCheck.classList.add('active');
-        
-        // Wait 8 seconds before refilling data entry queue
-        setTimeout(startQueueSimulation, 8000);
-      } else {
-        consoleQueue.textContent = `${itemsPending} pending`;
-      }
-    }, 400);
-  }
-
-  // Simulate Live Fluctuation of Console Chart Bars
-  const chartBars = document.querySelectorAll('.chart-bar');
-  function fluctuateChart() {
-    chartBars.forEach(bar => {
-      const currentVal = parseInt(bar.style.getPropertyValue('--val')) || 50;
-      // Fluctuate by +/- 15%
-      const delta = Math.floor(Math.random() * 31) - 15;
-      let newVal = currentVal + delta;
-      if (newVal < 10) newVal = 10;
-      if (newVal > 100) newVal = 100;
-      bar.style.setProperty('--val', `${newVal}%`);
-    });
-  }
-
-  // Start all console widgets
-  startInvoiceSimulation();
-  startQueueSimulation();
-  setInterval(fluctuateChart, 1500);
-
-
-  // --- 4. Scroll-Triggered Stat Counters ---
+  // --- 3. Scroll-Triggered Stat Counters ---
   const statNumbers = document.querySelectorAll('.stat-number');
   
   const countUp = (element) => {
     const targetString = element.getAttribute('data-target'); // e.g. "70" or "90"
-    const targetNum = parseInt(targetString);
+    if (!targetString) return;
+    const targetNum = parseInt(targetString, 10);
     let startNum = 0;
     
-    // We want the text to look like: e.g. "50-70%" or "80-90%" during count up
     // Lower bound start points
     const lowerBound = targetNum === 70 ? 50 : 80; 
     let currentLower = 0;
     let currentUpper = 0;
     
-    const duration = 2000; // 2 seconds
+    const duration = 1800;
     const frameRate = 60;
     const totalFrames = (duration / 1000) * frameRate;
     let frame = 0;
@@ -249,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       frame++;
       const progress = frame / totalFrames;
       
-      // Easing out quadratic
+      // Quadratic ease out
       const easedProgress = progress * (2 - progress);
       
       currentLower = Math.floor(lowerBound * easedProgress);
@@ -547,110 +457,253 @@ document.addEventListener('DOMContentLoaded', () => {
   // The central invoice file is the anchor from which each processing card
   // emerges forward into the crisp foreground, processes its stage, and smoothly
   // returns into the document before the next stage emerges.
-  (function initWorkflow() {
-    const hub = document.querySelector('[data-pipeline]');
-    if (!hub) return;
+  // --- Hero Physical 3D Digital File Stack Interaction Engine ---
+  // The stack of 4 digital files physically reorders as files are activated.
+  // The front file elevates, straightens, pops out its internal document sheet,
+  // resolves, retracts, closes, drops backward, and moves to the rear of the stack.
+  (function initHeroFileStack() {
+    const container = document.getElementById('heroFileStack');
+    if (!container) return;
 
-    const steps = Array.from(hub.querySelectorAll('.pipe-step'));
-    const stages = Array.from(hub.querySelectorAll('.pipe-stage'));
-    const bar = hub.querySelector('.pipe-progress-bar');
-    const timer = hub.querySelector('[data-pipe-timer]');
-    const TIMES = [0.4, 1.3, 2.4, 3.2];
-
+    const files = Array.from(container.querySelectorAll('.stack-file'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    if (reduceMotion.matches) {
-      hub.classList.add('is-static');
-      if (timer) timer.textContent = '3.2 s';
-      return;
-    }
-
-    let current = 0;
-    let autoTimer = null;
+    let stackOrder = ['capture', 'understand', 'validate', 'post'];
     let isTransitioning = false;
+    let autoTimer = null;
+    let activeResolveTimer = null;
     let isVisible = true;
 
-    // Smooth timer countdown interpolation
-    let shownTime = TIMES[0];
-    let timerFrame = null;
-    function animateTimer(target) {
-      cancelAnimationFrame(timerFrame);
-      const from = shownTime, start = performance.now();
-      const step = (now) => {
-        const t = Math.min(1, (now - start) / 480);
-        shownTime = from + (target - from) * (1 - Math.pow(1 - t, 3));
-        if (timer) timer.textContent = `${shownTime.toFixed(1)} s`;
-        if (t < 1) timerFrame = requestAnimationFrame(step);
-      };
-      timerFrame = requestAnimationFrame(step);
+    function applyPositions() {
+      files.forEach(file => {
+        const key = file.dataset.file;
+        const pos = stackOrder.indexOf(key);
+
+        file.classList.remove('is-pos-0', 'is-pos-1', 'is-pos-2', 'is-pos-3', 'is-front');
+        file.classList.add(`is-pos-${pos}`);
+        if (pos === 0) {
+          file.classList.add('is-front');
+        }
+      });
     }
 
-    function setStage(nextIdx, isAuto = false) {
-      if (nextIdx === current && isTransitioning) return;
-      isTransitioning = true;
+    function updateAiAutomationBox(stageKey) {
+      const box = document.getElementById('heroAiBox');
+      if (!box) return;
 
-      const prevIdx = current;
-      current = nextIdx;
+      const stageItems = Array.from(box.querySelectorAll('.ai-stage-item'));
+      const idxBadge = document.getElementById('aiBoxStageIndex');
+      const statusBadge = document.getElementById('aiBoxStageStatus');
 
-      // 1. Return previous card back into the anchor document
-      if (prevIdx !== nextIdx && stages[prevIdx]) {
-        stages[prevIdx].classList.remove('is-active', 'is-idle');
-        stages[prevIdx].classList.add('is-returning');
+      const stageMap = {
+        capture: { num: '01', label: 'CAPTURE', complete: false },
+        understand: { num: '02', label: 'EXTRACT', complete: false },
+        validate: { num: '03', label: 'VALIDATE', complete: false },
+        post: { num: '04', label: 'COMPLETE \u2713', complete: true }
+      };
 
+      const info = stageMap[stageKey] || stageMap.capture;
+      if (idxBadge) idxBadge.textContent = info.num;
+      if (statusBadge) statusBadge.textContent = info.label;
+
+      box.classList.toggle('is-complete', info.complete);
+
+      stageItems.forEach(item => {
+        if (item.dataset.stage === stageKey) {
+          item.classList.remove('is-leaving');
+          item.classList.add('is-active');
+        } else if (item.classList.contains('is-active')) {
+          item.classList.remove('is-active');
+          item.classList.add('is-leaving');
+          setTimeout(() => item.classList.remove('is-leaving'), 400);
+        }
+      });
+    }
+
+    function openActiveFile() {
+      const frontKey = stackOrder[0];
+      const frontFile = files.find(f => f.dataset.file === frontKey);
+      if (!frontFile) return;
+
+      // Synchronize the small AI automation box on the left with the active envelope stage
+      updateAiAutomationBox(frontKey);
+
+      const sheet = frontFile.querySelector('.file-emerging-sheet');
+
+      // 1. Elevate & straighten the physical folder jacket
+      frontFile.classList.add('is-open');
+
+      // 2. Physically pop out the internal document content sheet
+      if (sheet) {
         setTimeout(() => {
-          stages[prevIdx].classList.remove('is-returning');
-          stages[prevIdx].classList.add('is-idle');
-        }, 460);
+          sheet.classList.add('is-popped');
+        }, 120);
       }
 
-      // 2. Emerging next card from within/behind the anchor document with slight overlap
-      setTimeout(() => {
-        stages.forEach((stage, idx) => {
-          if (idx === nextIdx) {
-            stage.classList.remove('is-idle', 'is-returning');
-            stage.classList.add('is-active');
-          } else if (idx !== prevIdx) {
-            stage.classList.remove('is-active', 'is-returning');
-            stage.classList.add('is-idle');
+      // Stage-specific content-driven micro-animations
+      clearTimeout(activeResolveTimer);
+      if (frontKey === 'capture') {
+        const items = frontFile.querySelectorAll('.pipeline-item');
+        items.forEach((item, idx) => {
+          item.classList.remove('is-captured');
+          setTimeout(() => item.classList.add('is-captured'), 120 + idx * 200);
+        });
+      } else if (frontKey === 'understand') {
+        const cells = frontFile.querySelectorAll('.field-cell');
+        cells.forEach((cell, idx) => {
+          cell.style.opacity = '0.25';
+          cell.style.transform = 'translateY(6px)';
+          setTimeout(() => {
+            cell.style.opacity = '1';
+            cell.style.transform = 'translateY(0)';
+          }, 80 + idx * 80);
+        });
+      } else if (frontKey === 'validate') {
+        const items = frontFile.querySelectorAll('.verify-item');
+        items.forEach((item, idx) => {
+          const badge = item.querySelector('.verify-badge');
+          if (badge) {
+            badge.style.transform = 'scale(0.85)';
+            badge.style.opacity = '0.3';
+            setTimeout(() => {
+              badge.style.transform = 'scale(1)';
+              badge.style.opacity = '1';
+            }, 100 + idx * 170);
           }
         });
-
-        // Update nav steps
-        steps.forEach((step, idx) => {
-          step.classList.toggle('is-active', idx === nextIdx);
-          step.classList.toggle('is-done', idx < nextIdx);
+      } else if (frontKey === 'post') {
+        const syncItems = frontFile.querySelectorAll('.sync-item');
+        syncItems.forEach((item, idx) => {
+          item.style.opacity = '0.3';
+          setTimeout(() => {
+            item.style.opacity = '1';
+          }, 100 + idx * 160);
         });
-
-        // Update progress bar
-        if (bar) {
-          bar.style.width = `${(nextIdx + 1) * 25}%`;
+        const ping = frontFile.querySelector('.notify-ping');
+        if (ping) {
+          setTimeout(() => {
+            ping.style.animation = 'ping 1s cubic-bezier(0, 0, 0.2, 1) 2';
+          }, 520);
         }
-
-        // Animate timer
-        animateTimer(TIMES[nextIdx]);
-
-        setTimeout(() => {
-          isTransitioning = false;
-        }, 300);
-      }, prevIdx === nextIdx ? 0 : 160);
-
-      if (!isAuto) {
-        resetAuto();
       }
     }
 
-    function nextStage() {
-      const nextIdx = (current + 1) % stages.length;
-      setStage(nextIdx, true);
+    function closeActiveFile(callback) {
+      const frontKey = stackOrder[0];
+      const frontFile = files.find(f => f.dataset.file === frontKey);
+      if (!frontFile) {
+        if (callback) callback();
+        return;
+      }
+
+      const sheet = frontFile.querySelector('.file-emerging-sheet');
+      if (sheet) {
+        // Content physically retracts back into the file
+        sheet.classList.remove('is-popped');
+      }
+
+      setTimeout(() => {
+        // File closes
+        frontFile.classList.remove('is-open');
+        if (callback) callback();
+      }, reduceMotion.matches ? 0 : 340);
     }
 
+    function cycleFrontToBack(isAuto = false) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      clearTimeout(activeResolveTimer);
+
+      closeActiveFile(() => {
+        const frontKey = stackOrder[0];
+        const frontFile = files.find(f => f.dataset.file === frontKey);
+
+        // Physically swoop backward from front toward the rear
+        if (frontFile && !reduceMotion.matches) {
+          frontFile.classList.add('is-cycling-out');
+        }
+
+        setTimeout(() => {
+          // Reorder array: front file moves to the last position of the stack
+          const out = stackOrder.shift();
+          stackOrder.push(out);
+
+          applyPositions();
+
+          setTimeout(() => {
+            if (frontFile) {
+              frontFile.classList.remove('is-cycling-out');
+            }
+            // Elevate and open the new front file
+            openActiveFile();
+            isTransitioning = false;
+          }, 320);
+        }, reduceMotion.matches ? 0 : 220);
+      });
+
+      if (!isAuto) resetAuto();
+    }
+
+    function bringFileToFront(targetKey) {
+      if (isTransitioning) return;
+      if (stackOrder[0] === targetKey) {
+        cycleFrontToBack();
+        return;
+      }
+
+      isTransitioning = true;
+      clearTimeout(activeResolveTimer);
+
+      closeActiveFile(() => {
+        const targetIdx = stackOrder.indexOf(targetKey);
+        if (targetIdx > 0) {
+          const shifted = stackOrder.splice(0, targetIdx);
+          stackOrder = stackOrder.concat(shifted);
+        }
+
+        applyPositions();
+
+        setTimeout(() => {
+          openActiveFile();
+          isTransitioning = false;
+        }, 360);
+      });
+
+      resetAuto();
+    }
+
+    // Attach File Click & Keyboard Events
+    files.forEach(file => {
+      file.addEventListener('click', () => {
+        const key = file.dataset.file;
+        if (file.classList.contains('is-pos-0')) {
+          cycleFrontToBack();
+        } else {
+          bringFileToFront(key);
+        }
+      });
+
+      file.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const key = file.dataset.file;
+          if (file.classList.contains('is-pos-0')) {
+            cycleFrontToBack();
+          } else {
+            bringFileToFront(key);
+          }
+        }
+      });
+    });
+
+    // Auto-cycle loop
     function startAuto() {
       if (autoTimer || reduceMotion.matches) return;
       autoTimer = setInterval(() => {
-        if (!document.hidden && isVisible) {
-          nextStage();
+        if (!document.hidden && isVisible && !isTransitioning) {
+          cycleFrontToBack(true);
         }
-      }, 3800);
+      }, 5200);
     }
 
     function stopAuto() {
@@ -665,52 +718,345 @@ document.addEventListener('DOMContentLoaded', () => {
       startAuto();
     }
 
-    // Step navigation interactions
-    steps.forEach((step, idx) => {
-      step.setAttribute('tabindex', '0');
-      step.setAttribute('role', 'button');
-      step.setAttribute('aria-label', `Stage ${idx + 1}: ${step.textContent.trim()}`);
-
-      const activate = () => setStage(idx);
-      step.addEventListener('click', activate);
-      step.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          activate();
-        }
-      });
-    });
-
-    // Pause on hover so user can read the active card uninterrupted
-    hub.addEventListener('mouseenter', stopAuto);
-    hub.addEventListener('mouseleave', () => {
+    container.addEventListener('mouseenter', stopAuto);
+    container.addEventListener('mouseleave', () => {
       if (isVisible && !document.hidden) startAuto();
     });
 
-    // IntersectionObserver: run only when in viewport
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
         isVisible = entries[0].isIntersecting;
-        if (isVisible) startAuto(); else stopAuto();
+        if (isVisible) startAuto();
+        else stopAuto();
       }, { threshold: 0.15 });
-      observer.observe(hub);
+      observer.observe(container);
     } else {
       startAuto();
     }
 
-    // Tab visibility
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopAuto();
       else if (isVisible) startAuto();
     });
 
-    // Initial state: Stage 0 is active, others are idle inside file
-    stages.forEach((stage, idx) => {
-      stage.classList.toggle('is-active', idx === 0);
-      stage.classList.toggle('is-idle', idx !== 0);
-    });
-    setStage(0);
+    // --- Vertical Scroll driving Horizontal Envelope Movement & Active Stages ---
+    const heroSection = document.getElementById('hero');
+    const deckElement = document.getElementById('fileStackDeck');
+    let isScrollCycling = false;
+    let scrollPauseTimer = null;
+    let scrollRaf = null;
+
+    function handleHeroScroll() {
+      if (reduceMotion.matches || !heroSection || !deckElement) return;
+
+      const rect = heroSection.getBoundingClientRect();
+      const heroH = heroSection.offsetHeight;
+
+      // Only active while hero is partially in view
+      if (rect.bottom <= 50 || rect.top > window.innerHeight) return;
+
+      // Vertical progress through hero: 0 to 1
+      const scrollY = -rect.top;
+      const maxScrollDist = Math.max(1, heroH * 0.75);
+      const progress = Math.max(0, Math.min(1, scrollY / maxScrollDist));
+
+      // Horizontal physical movement of the envelope stack
+      const shiftX = (progress * -36).toFixed(1);
+      deckElement.style.setProperty('--hero-scroll-shift-x', `${shiftX}px`);
+
+      // Determine envelope stage from vertical scroll:
+      // 0.00 - 0.25: capture
+      // 0.25 - 0.50: understand
+      // 0.50 - 0.75: validate
+      // 0.75 - 1.00: post
+      const stages = ['capture', 'understand', 'validate', 'post'];
+      const targetIdx = Math.min(3, Math.floor(progress * 4));
+      const targetStage = stages[targetIdx];
+
+      if (targetStage !== stackOrder[0] && !isTransitioning) {
+        isScrollCycling = true;
+        stopAuto();
+        bringFileToFront(targetStage);
+
+        clearTimeout(scrollPauseTimer);
+        scrollPauseTimer = setTimeout(() => {
+          isScrollCycling = false;
+          if (isVisible) startAuto();
+        }, 2800);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!scrollRaf) {
+        scrollRaf = requestAnimationFrame(() => {
+          handleHeroScroll();
+          scrollRaf = null;
+        });
+      }
+    }, { passive: true });
+
+    // Initial positioning & open first file
+    applyPositions();
+    setTimeout(() => {
+      openActiveFile();
+    }, 380);
     startAuto();
+  })();
+
+  // --- Problem Section (Diagnosis): Content-Driven Process Animation ---
+  (function initProblemSection() {
+    const diagSection = document.getElementById('diagnosis');
+    if (!diagSection) return;
+
+    const taskCard = diagSection.querySelector('[data-diag-card="tasks"]');
+    const taskDemo = diagSection.querySelector('.proc-tasks');
+    const resolvedBanner = diagSection.getElementById('taskResolvedBanner');
+    const badge = diagSection.querySelector('[data-state-badge]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let isStreamlined = false;
+    let autoCycleTimer = null;
+
+    function applyTaskState(streamlined) {
+      isStreamlined = streamlined;
+      if (taskDemo) {
+        taskDemo.classList.toggle('is-streamlined', streamlined);
+        taskDemo.classList.toggle('is-congested', !streamlined);
+      }
+      if (resolvedBanner) {
+        resolvedBanner.classList.toggle('is-active', streamlined);
+      }
+      if (badge) {
+        badge.textContent = streamlined ? 'Automated in 0.4s \u2713' : 'Manual Bottleneck (4.8h Delay)';
+        badge.style.color = streamlined ? '#10b981' : '#f59e0b';
+        badge.style.background = streamlined ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+      }
+    }
+
+    // Looping lifecycle: Congestion Backlog -> Streamlined Transformation
+    function startTaskLoop() {
+      if (reduceMotion.matches || autoCycleTimer) return;
+      autoCycleTimer = setInterval(() => {
+        if (!document.hidden) {
+          applyTaskState(!isStreamlined);
+        }
+      }, 5200);
+    }
+
+    function stopTaskLoop() {
+      if (autoCycleTimer) {
+        clearInterval(autoCycleTimer);
+        autoCycleTimer = null;
+      }
+    }
+
+    if (taskCard) {
+      taskCard.addEventListener('mouseenter', () => {
+        stopTaskLoop();
+        applyTaskState(true);
+      });
+      taskCard.addEventListener('mouseleave', () => {
+        startTaskLoop();
+      });
+      taskCard.addEventListener('click', () => {
+        applyTaskState(!isStreamlined);
+      });
+    }
+
+    // Card 2: Fragmented Sources -> Central Convergence -> Connected
+    const telemetryDemo = diagSection.querySelector('.proc-telemetry');
+    const telemetryBadge = diagSection.querySelector('[data-telemetry-badge]');
+    const sourceRows = diagSection.querySelectorAll('#fragmentedRows .proc-row');
+    let teleConnected = true;
+
+    function cycleTelemetry() {
+      if (reduceMotion.matches || document.hidden) return;
+      teleConnected = !teleConnected;
+      if (telemetryDemo) {
+        telemetryDemo.classList.toggle('is-fragmented', !teleConnected);
+        telemetryDemo.classList.toggle('is-connected', teleConnected);
+      }
+      if (telemetryBadge) {
+        telemetryBadge.textContent = teleConnected ? 'Connected \u2713' : 'Fragmented Silos';
+        telemetryBadge.style.color = teleConnected ? '#10b981' : '#f59e0b';
+      }
+      sourceRows.forEach((r, idx) => {
+        const status = r.querySelector('.proc-row-status');
+        if (status) {
+          if (teleConnected) {
+            status.textContent = 'Connected \u2713';
+            status.className = 'proc-row-status is-connected';
+          } else {
+            const labels = ['Isolated', 'Siloed', 'Manual Export', 'Unlinked', 'Awaiting Sync'];
+            status.textContent = labels[idx % labels.length];
+            status.className = 'proc-row-status is-review';
+          }
+        }
+      });
+    }
+
+    setInterval(cycleTelemetry, 4800);
+
+    // Card 3: Financial Transaction Pipeline Sequence Animation
+    const financeRows = document.querySelectorAll('#financialPipelineRows .proc-row');
+    if (financeRows.length && !reduceMotion.matches) {
+      let activeIdx = 0;
+      setInterval(() => {
+        if (document.hidden) return;
+        financeRows.forEach((r, i) => {
+          r.classList.toggle('is-active', i <= activeIdx);
+        });
+        activeIdx = (activeIdx + 1) % financeRows.length;
+      }, 1500);
+    }
+
+    if ('IntersectionObserver' in window) {
+      const diagObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            startTaskLoop();
+          } else {
+            stopTaskLoop();
+          }
+        });
+      }, { threshold: 0.2 });
+      diagObserver.observe(diagSection);
+    } else {
+      startTaskLoop();
+    }
+  })();
+
+  // --- Before / After Section: 4.8 Hours Manual vs 3.2 Secs Automated ---
+  (function initComparisonSection() {
+    const compSection = document.getElementById('comparison');
+    if (!compSection) return;
+
+    const manualRows = compSection.querySelectorAll('#manualQueueList .queue-row');
+    const manualCount = compSection.getElementById('manualQueueCount');
+    const manualMetric = compSection.getElementById('manualMetricVal');
+    const manualOverlay = compSection.getElementById('manualMetricOverlay');
+
+    const autoSteps = compSection.querySelectorAll('#autoPipelineNodes .pipeline-step');
+    const autoOverlay = compSection.getElementById('autoMetricOverlay');
+    const autoBars = compSection.querySelectorAll('#autoPerfBars span');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduceMotion.matches) return;
+
+    let manualStep = 0;
+    let autoStep = 0;
+
+    // Manual side: Accumulating bottleneck backlog corresponding to 4.8 Hours
+    function tickManualQueue() {
+      if (document.hidden) return;
+      manualStep = (manualStep + 1) % 4;
+
+      if (manualStep === 0) {
+        if (manualCount) manualCount.textContent = '1 pending';
+        if (manualMetric) manualMetric.textContent = '1.2 Hours';
+        if (manualOverlay) manualOverlay.classList.remove('is-alert');
+        manualRows.forEach((r, i) => r.style.opacity = i === 0 ? '1' : '0.45');
+      } else if (manualStep === 1) {
+        if (manualCount) manualCount.textContent = '2 pending';
+        if (manualMetric) manualMetric.textContent = '2.8 Hours';
+        manualRows.forEach((r, i) => r.style.opacity = i <= 1 ? '1' : '0.45');
+      } else if (manualStep === 2) {
+        if (manualCount) manualCount.textContent = '3 pending';
+        if (manualMetric) manualMetric.textContent = '4.8 Hours';
+        if (manualOverlay) manualOverlay.classList.add('is-alert');
+        manualRows.forEach(r => r.style.opacity = '1');
+      }
+    }
+
+    // Automated side: Ingest -> Parse -> Verified -> 3.2s Resolve
+    function tickAutoPipeline() {
+      if (document.hidden) return;
+      autoStep = (autoStep + 1) % 4;
+
+      autoSteps.forEach((s, idx) => {
+        s.classList.toggle('active', idx <= autoStep);
+        s.classList.toggle('is-running', idx === autoStep);
+      });
+
+      if (autoBars.length) {
+        autoBars.forEach((b, idx) => {
+          b.classList.toggle('active', idx <= autoStep);
+        });
+      }
+
+      if (autoOverlay) {
+        autoOverlay.classList.toggle('is-finished', autoStep === 2 || autoStep === 3);
+      }
+    }
+
+    setInterval(tickManualQueue, 2200);
+    setInterval(tickAutoPipeline, 1800);
+  })();
+
+  // --- Bento Capabilities: Structural Branching & Continuous Audit Trail ---
+  (function initBentoMotion() {
+    const bentoSection = document.getElementById('capabilities');
+    if (!bentoSection) return;
+
+    const indPills = bentoSection.querySelectorAll('.industry-nav-pills .ind-pill');
+    const branchSectors = bentoSection.querySelectorAll('.branch-sectors-grid .branch-sector');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // 1. Industry Structural Branching Selector & Dynamic Flow
+    if (indPills.length && branchSectors.length) {
+      let currentIndIdx = 0;
+
+      function selectIndustry(targetSector) {
+        indPills.forEach(p => p.classList.toggle('is-active', p.dataset.ind === targetSector));
+        branchSectors.forEach(sec => sec.classList.toggle('is-active', sec.dataset.sector === targetSector));
+      }
+
+      indPills.forEach((pill, idx) => {
+        pill.addEventListener('click', () => {
+          currentIndIdx = idx;
+          selectIndustry(pill.dataset.ind);
+        });
+      });
+
+      if (!reduceMotion.matches) {
+        setInterval(() => {
+          if (document.hidden) return;
+          currentIndIdx = (currentIndIdx + 1) % indPills.length;
+          selectIndustry(indPills[currentIndIdx].dataset.ind);
+        }, 3600);
+      }
+    }
+
+    // 2. Live Continuous Audit Trail Stream (Bento Card 2)
+    const auditStack = document.getElementById('liveAuditStack');
+    if (auditStack && !reduceMotion.matches) {
+      const sampleEvents = [
+        'PO-0778 3-way match verified',
+        'GST & tax split calculated',
+        'Approver alert dispatched',
+        'GL Account 6100-AP posted',
+        'Delivery docket cryptographically sealed',
+        'Supplier bank details cross-verified'
+      ];
+      let eventIdx = 0;
+
+      setInterval(() => {
+        if (document.hidden) return;
+        const now = new Date();
+        const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
+          .map(n => String(n).padStart(2, '0')).join(':');
+
+        const newRow = document.createElement('span');
+        newRow.className = 'viz-audit-line';
+        newRow.innerHTML = `<b>${timeStr}</b> ${sampleEvents[eventIdx % sampleEvents.length]} <i>&check;</i>`;
+        auditStack.insertBefore(newRow, auditStack.firstChild);
+
+        if (auditStack.children.length > 4) {
+          auditStack.removeChild(auditStack.lastChild);
+        }
+        eventIdx++;
+      }, 2900);
+    }
   })();
 
   // --- Hero word rotator: cycles through the processes we automate ---
@@ -822,14 +1168,690 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Homepage Interactive Data / Star / Node Field (Canvas) ---
+  // Sophisticated subtle data environment reacting to cursor with spring/damping inertia.
+  // Strongest in Hero, gradually subtle down the page. No spotlights or cursor halos.
+  (function initHeroCanvasNetwork() {
+    const canvas = document.getElementById('heroNetworkCanvas');
+    if (!canvas) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = 0, height = 0, dpr = 1;
+    let animFrame = null;
+
+    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, active: false };
+
+    const NODE_COUNT = 52;
+    const CONNECT_DIST = 115;
+    const MOUSE_RADIUS = 180;
+    const nodes = [];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (nodes.length === 0) {
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            baseX: Math.random() * width,
+            baseY: Math.random() * height,
+            vx: 0,
+            vy: 0,
+            radius: 1.0 + Math.random() * 0.7,
+            orbitAngle: Math.random() * Math.PI * 2,
+            orbitSpeed: (Math.random() - 0.5) * 0.006,
+            pulsePhase: Math.random() * Math.PI * 2,
+            baseAlpha: 0.28 + Math.random() * 0.35
+          });
+        }
+      } else {
+        nodes.forEach(n => {
+          n.baseX = Math.min(n.baseX, width);
+          n.baseY = Math.min(n.baseY, height);
+        });
+      }
+    }
+
+    function updateAndDraw() {
+      if (document.hidden) {
+        animFrame = null;
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      const isDark = document.body.classList.contains('dark-theme');
+      const scrollY = window.scrollY;
+      // Strongest in Hero, gradually subtle down the page
+      const fadeFactor = Math.max(0.18, 1.0 - (scrollY / 950) * 0.78);
+
+      // Smooth mouse coordinate interpolation
+      if (mouse.active) {
+        mouse.x += (mouse.targetX - mouse.x) * 0.12;
+        mouse.y += (mouse.targetY - mouse.y) * 0.12;
+      }
+
+      // Update & render nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+
+        // Micro gentle drift
+        n.orbitAngle += n.orbitSpeed;
+        const driftTargetX = n.baseX + Math.cos(n.orbitAngle) * 8;
+        const driftTargetY = n.baseY + Math.sin(n.orbitAngle) * 8;
+
+        // Interactive cursor spring repulsion & damping
+        if (mouse.active) {
+          const dx = n.x - mouse.x;
+          const dy = n.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < MOUSE_RADIUS && dist > 0) {
+            const force = (1 - dist / MOUSE_RADIUS) * 24 * fadeFactor;
+            n.vx += (dx / dist) * force * 0.14;
+            n.vy += (dy / dist) * force * 0.14;
+          }
+        }
+
+        // Spring force back to equilibrium
+        const springX = (driftTargetX - n.x) * 0.038;
+        const springY = (driftTargetY - n.y) * 0.038;
+        n.vx = (n.vx + springX) * 0.84;
+        n.vy = (n.vy + springY) * 0.84;
+
+        n.x += n.vx;
+        n.y += n.vy;
+
+        // Draw connections between nearby nodes (deforms organically with node movement)
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n2 = nodes[j];
+          const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+
+          if (dist < CONNECT_DIST) {
+            const lineAlpha = (1 - dist / CONNECT_DIST) * (isDark ? 0.09 : 0.06) * fadeFactor;
+            ctx.strokeStyle = isDark
+              ? `rgba(56, 189, 248, ${lineAlpha})`
+              : `rgba(0, 102, 204, ${lineAlpha})`;
+            ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.stroke();
+          }
+        }
+
+        // Draw node point (very small crisp dot)
+        n.pulsePhase += 0.02;
+        const pulse = 1 + Math.sin(n.pulsePhase) * 0.15;
+        const nodeAlpha = n.baseAlpha * fadeFactor * (isDark ? 1 : 0.8);
+        ctx.fillStyle = isDark
+          ? `rgba(148, 163, 184, ${nodeAlpha})`
+          : `rgba(15, 23, 42, ${nodeAlpha})`;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius * pulse, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      animFrame = requestAnimationFrame(updateAndDraw);
+    }
+
+    function startLoop() {
+      if (!animFrame && !document.hidden) {
+        animFrame = requestAnimationFrame(updateAndDraw);
+      }
+    }
+
+    function stopLoop() {
+      if (animFrame) {
+        cancelAnimationFrame(animFrame);
+        animFrame = null;
+      }
+    }
+
+    window.addEventListener('pointerenter', (e) => {
+      mouse.targetX = mouse.x = e.clientX;
+      mouse.targetY = mouse.y = e.clientY;
+      mouse.active = true;
+      startLoop();
+    }, { passive: true });
+
+    window.addEventListener('pointermove', (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+      mouse.active = true;
+      startLoop();
+    }, { passive: true });
+
+    window.addEventListener('pointerleave', () => {
+      mouse.active = false;
+    });
+
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        startLoop();
+      }, 100);
+    }, { passive: true });
+
+    window.addEventListener('scroll', () => {
+      startLoop();
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopLoop();
+      else startLoop();
+    });
+
+    resize();
+    startLoop();
+  })();
+
+  // ==========================================================================
+  // CAPABILITIES SECTION: "ENTERPRISE AUTOMATION BUILT FOR REAL OPERATIONS"
+  // 1. DYNAMIC INTERACTIVE AUTOMATION NETWORK BACKGROUND (CANVAS)
+  // 2. CONTINUOUS BIDIRECTIONAL SCROLL-DRIVEN SECTION CHOREOGRAPHY
+  // ==========================================================================
+
+  // --- 1. Dynamic Interactive Automation Network Canvas ---
+  (function initCapabilitiesAutomationNetwork() {
+    const section = document.getElementById('capabilities');
+    const canvas = document.getElementById('capabilitiesNetworkCanvas');
+    if (!section || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let rafId = null;
+    let isVisible = false;
+
+    // Mouse tracking for damped interactive deflection
+    let mouse = { x: -9999, y: -9999, active: false };
+
+    // Section dimensions resize
+    function resize() {
+      const rect = section.getBoundingClientRect();
+      width = Math.max(300, rect.width);
+      height = Math.max(300, rect.height);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    }
+
+    // Node network generation
+    const NODE_COUNT = 46;
+    const MAX_DIST = 140;
+    const nodes = [];
+
+    function initNodes() {
+      nodes.length = 0;
+      for (let i = 0; i < NODE_COUNT; i++) {
+        // Distribute nicely with subtle margin
+        const x = Math.random() * (width || 1200);
+        const y = Math.random() * (height || 800);
+        const depth = Math.random() < 0.35 ? 0.45 : (0.75 + Math.random() * 0.25); // 2 depth tiers
+
+        nodes.push({
+          x,
+          y,
+          homeX: x,
+          homeY: y,
+          vx: (Math.random() - 0.5) * 0.32 * depth,
+          vy: (Math.random() - 0.5) * 0.28 * depth,
+          radius: depth < 0.6 ? 1.5 : (2.0 + Math.random() * 0.8),
+          depth,
+          phase: Math.random() * Math.PI * 2,
+          // Spring-damper displacement from mouse
+          dx: 0,
+          dy: 0,
+          dvx: 0,
+          dvy: 0
+        });
+      }
+    }
+
+    // Dynamic Data Packets (Micro pulses traveling along connecting traces)
+    const PACKET_COUNT = 10;
+    const packets = [];
+
+    function initPackets() {
+      packets.length = 0;
+      for (let i = 0; i < PACKET_COUNT; i++) {
+        packets.push({
+          fromIdx: Math.floor(Math.random() * NODE_COUNT),
+          toIdx: -1,
+          progress: Math.random(),
+          speed: 0.008 + Math.random() * 0.012,
+          trail: []
+        });
+      }
+    }
+
+    function pickTargetNode(fromIdx) {
+      const from = nodes[fromIdx];
+      if (!from) return -1;
+      const candidates = [];
+      for (let j = 0; j < nodes.length; j++) {
+        if (j === fromIdx) continue;
+        const dx = (nodes[j].x + nodes[j].dx) - (from.x + from.dx);
+        const dy = (nodes[j].y + nodes[j].dy) - (from.y + from.dy);
+        const dist = Math.hypot(dx, dy);
+        if (dist < MAX_DIST) candidates.push(j);
+      }
+      if (candidates.length === 0) {
+        return Math.floor(Math.random() * nodes.length);
+      }
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    // Pointer events on section for subtle damped deflection
+    function onPointerMove(e) {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    }
+
+    function onPointerLeave() {
+      mouse.active = false;
+      mouse.x = -9999;
+      mouse.y = -9999;
+    }
+
+    section.addEventListener('pointermove', onPointerMove, { passive: true });
+    section.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
+    // Render loop
+    function render(time) {
+      if (!isVisible) return;
+
+      const isDark = document.body.classList.contains('dark-theme');
+      ctx.clearRect(0, 0, width, height);
+
+      const MOUSE_RADIUS = 180;
+      const SPRING_K = 0.065;
+      const DAMPING = 0.84;
+
+      // 1. Update and draw nodes with damped cursor influence & ambient drift
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+
+        // Ambient organic drift
+        n.x += n.vx;
+        n.y += n.vy;
+
+        // Soft bounce within boundaries
+        if (n.x < 10) { n.x = 10; n.vx *= -1; }
+        else if (n.x > width - 10) { n.x = width - 10; n.vx *= -1; }
+        if (n.y < 10) { n.y = 10; n.vy *= -1; }
+        else if (n.y > height - 10) { n.y = height - 10; n.vy *= -1; }
+
+        // Cursor deflection physics
+        let targetDx = 0;
+        let targetDy = 0;
+
+        if (mouse.active) {
+          const mdx = (n.x + n.dx) - mouse.x;
+          const mdy = (n.y + n.dy) - mouse.y;
+          const mDist = Math.hypot(mdx, mdy);
+          if (mDist < MOUSE_RADIUS && mDist > 0) {
+            const force = (1 - mDist / MOUSE_RADIUS) * 26 * n.depth;
+            targetDx = (mdx / mDist) * force;
+            targetDy = (mdy / mDist) * force;
+          }
+        }
+
+        // Spring settling
+        n.dvx += (targetDx - n.dx) * SPRING_K;
+        n.dvy += (targetDy - n.dy) * SPRING_K;
+        n.dvx *= DAMPING;
+        n.dvy *= DAMPING;
+        n.dx += n.dvx;
+        n.dy += n.dvy;
+
+        // Render node point
+        const posX = n.x + n.dx;
+        const posY = n.y + n.dy;
+        const pulse = 0.85 + Math.sin(time * 0.002 + n.phase) * 0.15;
+        const alpha = n.depth < 0.6
+          ? (isDark ? 0.32 : 0.22) * pulse
+          : (isDark ? 0.65 : 0.50) * pulse;
+
+        ctx.beginPath();
+        ctx.arc(posX, posY, n.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isDark
+          ? (n.depth > 0.6 ? `rgba(56, 189, 248, ${alpha})` : `rgba(148, 163, 184, ${alpha})`)
+          : (n.depth > 0.6 ? `rgba(0, 102, 204, ${alpha})` : `rgba(100, 116, 139, ${alpha})`);
+        ctx.fill();
+      }
+
+      // 2. Render connecting traces
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        const ax = a.x + a.dx;
+        const ay = a.y + a.dy;
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const bx = b.x + b.dx;
+          const by = b.y + b.dy;
+          const d = Math.hypot(bx - ax, by - ay);
+
+          if (d < MAX_DIST) {
+            const strength = (1 - d / MAX_DIST) * (a.depth * b.depth);
+            const lineAlpha = isDark ? strength * 0.22 : strength * 0.16;
+
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.strokeStyle = isDark
+              ? `rgba(56, 189, 248, ${lineAlpha})`
+              : `rgba(0, 102, 204, ${lineAlpha})`;
+            ctx.lineWidth = a.depth > 0.6 && b.depth > 0.6 ? 1.0 : 0.7;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 3. Render dynamic traveling data packets
+      for (let p = 0; p < packets.length; p++) {
+        const pkt = packets[p];
+        if (pkt.toIdx === -1 || pkt.toIdx >= nodes.length) {
+          pkt.toIdx = pickTargetNode(pkt.fromIdx);
+        }
+
+        const from = nodes[pkt.fromIdx];
+        const to = nodes[pkt.toIdx];
+
+        if (!from || !to) {
+          pkt.fromIdx = Math.floor(Math.random() * nodes.length);
+          pkt.toIdx = -1;
+          continue;
+        }
+
+        const fx = from.x + from.dx;
+        const fy = from.y + from.dy;
+        const tx = to.x + to.dx;
+        const ty = to.y + to.dy;
+
+        // Current packet position
+        const px = fx + (tx - fx) * pkt.progress;
+        const py = fy + (ty - fy) * pkt.progress;
+
+        // Draw bead
+        ctx.beginPath();
+        ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? '#38bdf8' : '#0066cc';
+        ctx.shadowColor = isDark ? 'rgba(56, 189, 248, 0.7)' : 'rgba(0, 102, 204, 0.5)';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow
+
+        // Advance packet
+        pkt.progress += pkt.speed;
+        if (pkt.progress >= 1) {
+          pkt.fromIdx = pkt.toIdx;
+          pkt.toIdx = pickTargetNode(pkt.fromIdx);
+          pkt.progress = 0;
+        }
+      }
+
+      if (!reduceMotion) {
+        rafId = requestAnimationFrame(render);
+      }
+    }
+
+    function startLoop() {
+      if (!rafId && isVisible) {
+        rafId = requestAnimationFrame(render);
+      }
+    }
+
+    function stopLoop() {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    // Viewport intersection observer to avoid running off-screen
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        isVisible = entries[0].isIntersecting;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      }, { rootMargin: '120px 0px 120px 0px' });
+      observer.observe(section);
+    } else {
+      isVisible = true;
+      startLoop();
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+      initNodes();
+      initPackets();
+      if (reduceMotion) render(0);
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopLoop();
+      else if (isVisible) startLoop();
+    });
+
+    resize();
+    initNodes();
+    initPackets();
+    render(0);
+  })();
+
+  // --- 2. Continuous Scroll-Driven Section Choreography ---
+  (function initCapabilitiesScrollChoreography() {
+    const section = document.getElementById('capabilities');
+    if (!section) return;
+
+    const titleLines = Array.from(section.querySelectorAll('.cap-title-inner'));
+    const badge = section.querySelector('.custom-badge');
+    const subtitle = section.querySelector('.section-subtitle');
+    const cards = Array.from(section.querySelectorAll('.bento-card'));
+    const wasteStages = document.getElementById('wasteFlowStages');
+    const velocityPath = document.getElementById('bentoVelocityPath');
+    const velocityChip = section.querySelector('.viz-results-chip');
+    const insightBarNew = section.querySelector('.insight-card .bar-new');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Precalculate velocity SVG path total length
+    let pathLength = 260;
+    if (velocityPath && velocityPath.getTotalLength) {
+      try {
+        pathLength = velocityPath.getTotalLength();
+        velocityPath.style.strokeDasharray = `${pathLength}`;
+        velocityPath.style.strokeDashoffset = `${pathLength}`;
+      } catch (e) { }
+    }
+
+    // Asymmetric starting spatial roles for the 5 cards:
+    // [shiftX, shiftY, startScale, startOpacity, startBlur]
+    // Card 1: Multi-Sector (Top-Left, Span 7)
+    // Card 2: CA Governance (Top-Right, Span 5)
+    // Card 3: Friction (Bottom-Left, Span 4)
+    // Card 4: Velocity Curve (Bottom-Center, Span 4)
+    // Card 5: Economic Benchmarks (Bottom-Right, Span 4)
+    const CARD_OFFSETS = [
+      { x: -56, y: 36,  scale: 0.94, opacity: 0.20, blur: 4 }, // Card 1: Top-Left
+      { x: 52,  y: -28, scale: 0.93, opacity: 0.20, blur: 4 }, // Card 2: Top-Right
+      { x: -44, y: 58,  scale: 0.92, opacity: 0.15, blur: 5 }, // Card 3: Bottom-Left
+      { x: 0,   y: 72,  scale: 0.91, opacity: 0.15, blur: 5 }, // Card 4: Bottom-Center
+      { x: 48,  y: 52,  scale: 0.92, opacity: 0.15, blur: 5 }  // Card 5: Bottom-Right
+    ];
+
+    let ticking = false;
+
+    function updateChoreography() {
+      if (reduceMotion) {
+        // Reduced motion: immediate final pristine resolution
+        cards.forEach(card => {
+          card.style.transform = '';
+          card.style.opacity = '1';
+          card.style.filter = '';
+        });
+        if (titleLines.length) {
+          titleLines.forEach(l => {
+            l.style.transform = '';
+            l.style.opacity = '1';
+            l.style.filter = '';
+          });
+        }
+        if (velocityPath) velocityPath.style.strokeDashoffset = '0';
+        if (insightBarNew) insightBarNew.style.width = '30%';
+        ticking = false;
+        return;
+      }
+
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      // Section scroll progression:
+      // Starts resolving when section top enters near 92% of viewport height
+      // Fully resolves into unified architecture when section top reaches 12% of viewport
+      const enterY = vh * 0.92;
+      const resolveY = vh * 0.12;
+      const rawProgress = (enterY - rect.top) / (enterY - resolveY);
+      const progress = Math.max(0, Math.min(1, rawProgress));
+
+      // CSS Custom property exposed for coordinate styling
+      section.style.setProperty('--cap-scroll-progress', progress.toFixed(4));
+
+      const isMobile = window.innerWidth <= 768;
+      const xFactor = isMobile ? 0.25 : 1.0;
+
+      // A. Composed Typography Mask Reveal
+      if (badge) {
+        const pBadge = Math.min(1, Math.max(0, progress * 3.0));
+        badge.style.opacity = pBadge.toFixed(3);
+        badge.style.transform = `translate3d(0, ${((1 - pBadge) * 14).toFixed(1)}px, 0)`;
+      }
+
+      if (titleLines.length) {
+        titleLines.forEach((line, idx) => {
+          // Stagger reveal between line 1 and line 2
+          const start = idx === 0 ? 0.04 : 0.14;
+          const end = idx === 0 ? 0.48 : 0.60;
+          const pLine = Math.min(1, Math.max(0, (progress - start) / (end - start)));
+          const shiftY = (1 - pLine) * 36;
+          const blur = (1 - pLine) * 6;
+          line.style.transform = `translate3d(0, ${shiftY.toFixed(1)}px, 0)`;
+          line.style.filter = `blur(${blur.toFixed(1)}px)`;
+          line.style.opacity = pLine.toFixed(3);
+        });
+      }
+
+      if (subtitle) {
+        const pSub = Math.min(1, Math.max(0, (progress - 0.20) / 0.46));
+        const shiftY = (1 - pSub) * 18;
+        const blur = (1 - pSub) * 4;
+        subtitle.style.transform = `translate3d(0, ${shiftY.toFixed(1)}px, 0)`;
+        subtitle.style.filter = `blur(${blur.toFixed(1)}px)`;
+        subtitle.style.opacity = pSub.toFixed(3);
+      }
+
+      // B. Asymmetric Cards Spatial Convergence (Disconnected -> Connected Unified System)
+      cards.forEach((card, idx) => {
+        const cfg = CARD_OFFSETS[idx] || CARD_OFFSETS[0];
+        const curX = (1 - progress) * cfg.x * xFactor;
+        const curY = (1 - progress) * cfg.y;
+        const curScale = cfg.scale + (1 - cfg.scale) * progress;
+        const curOpacity = cfg.opacity + (1 - cfg.opacity) * progress;
+        const curBlur = (1 - progress) * cfg.blur;
+
+        card.style.transform = `translate3d(${curX.toFixed(2)}px, ${curY.toFixed(2)}px, 0) scale(${curScale.toFixed(4)})`;
+        card.style.opacity = curOpacity.toFixed(3);
+        card.style.filter = `blur(${curBlur.toFixed(2)}px)`;
+      });
+
+      // C. Internal Product Dynamics:
+      // 1. Friction elimination collapse (Card 3)
+      if (wasteStages) {
+        if (progress >= 0.50) {
+          wasteStages.classList.add('is-collapsed');
+        } else {
+          wasteStages.classList.remove('is-collapsed');
+        }
+      }
+
+      // 2. Velocity ROI Curve SVG Draw (Card 4)
+      if (velocityPath) {
+        const pCurve = Math.min(1, Math.max(0, (progress - 0.32) / 0.58));
+        const offset = (1 - pCurve) * pathLength;
+        velocityPath.style.strokeDashoffset = `${offset.toFixed(1)}`;
+        if (velocityChip) {
+          velocityChip.style.opacity = pCurve > 0.85 ? '1' : '0.55';
+          velocityChip.style.borderColor = pCurve > 0.85 ? 'rgba(0, 136, 255, 0.45)' : '';
+        }
+      }
+
+      // 3. Economic benchmark savings compression (Card 5)
+      if (insightBarNew) {
+        const pBench = Math.min(1, Math.max(0, (progress - 0.38) / 0.52));
+        const barWidth = 100 - (pBench * 70); // 100% down to 30% width
+        insightBarNew.style.width = `${barWidth.toFixed(1)}%`;
+      }
+
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateChoreography);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    // Initial frame pass
+    updateChoreography();
+  })();
+
   // --- Bidirectional Scroll Reveal ---
   // Elements gracefully resolve into view on entrance and naturally de-resolve when leaving,
   // working smoothly in both directions with subtle staggered composition.
   const REVEAL_SELECTOR = [
-    '.hero-content > *', '.hero-visual', '.trust-bar',
+    '.hero-visual', '.trust-bar',
     '.section-head > *', '.section-title', '.section-subtitle', '.custom-badge',
     '.page-title', '.page-lead', '.eyebrow', '.trust-stat', '.about-hero-copy .hero-actions', '.founders-panel',
-    '.diagnosis-card', '.comparison-card', '.comparison-cta', '.risk-card', '.capability-card', '.stats-bento-card',
+    '.diagnosis-card', '.comparison-card', '.comparison-cta', '.risk-card', '.bento-card', '.capability-card', '.stats-bento-card',
     '.blog-card', '.cta-card', '.engine-card', '.solution-horizontal-card', '.segmented-nav',
     '.value-row', '.team-card', '.process-step', '.about-story-copy > p',
     '.contact-info-card', '.contact-form-card', '.map-container', '.footnote'
@@ -840,8 +1862,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function initReveal() {
     if (reduceMotion || !('IntersectionObserver' in window)) return;
 
+    // Exclude #capabilities so the continuous scroll-progress engine has 100% dedicated control
     const all = new Set(Array.from(document.querySelectorAll(REVEAL_SELECTOR))
-      .filter(el => !el.closest('#preloader, .navbar, .footer')));
+      .filter(el => !el.closest('#preloader, .navbar, .footer, #capabilities')));
     // Animate only the outermost match so nested items don't double-animate
     const targets = Array.from(all).filter(el => {
       for (let p = el.parentElement; p; p = p.parentElement) if (all.has(p)) return false;
@@ -861,9 +1884,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
     targets.forEach(el => {
+      // Assign typographic levels for structured motion hierarchy
+      if (el.matches('.custom-badge, .card-pretitle, .bento-badge, .eyebrow')) {
+        el.classList.add('typo-level-1');
+      } else if (el.matches('.section-title, .hero-title, .capability-title, .risk-card-title, .card-title, .page-title')) {
+        el.classList.add('typo-level-2');
+      } else if (el.matches('.section-subtitle, .hero-description, .hero-rotator, .page-lead, .card-body, .capability-body, .risk-card-body, .hero-checklist')) {
+        el.classList.add('typo-level-3');
+      } else if (el.matches('.perf-val, .metric-val, .stat-num, .tab-index-badge')) {
+        el.classList.add('typo-level-4');
+      } else if (el.matches('.hero-actions, .comparison-cta, .card-link, .btn')) {
+        el.classList.add('typo-level-5');
+      }
+
       const siblings = Array.from(el.parentElement.children).filter(c => all.has(c));
       const index = Math.max(0, siblings.indexOf(el));
-      el.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 70}ms`);
+      el.style.setProperty('--reveal-delay', `${Math.min(index, 6) * 75}ms`);
       el.classList.add('reveal');
 
       // If already in viewport on initial load, activate immediately
