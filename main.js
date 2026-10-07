@@ -543,42 +543,41 @@ document.addEventListener('DOMContentLoaded', () => {
     vizEls.forEach(el => el.classList.add('in-view'));
   }
 
-  // --- Hero pipeline: one invoice moves through four stages ---
-  // Desktop: the hero pins and scroll position drives the stage & decode resolution; while the
-  // visitor is still at the top it auto-plays. Tablets and phones auto-play
-  // when visible. Reduced motion shows every stage as a static list.
-  (function initPipeline() {
-    const panel = document.querySelector('[data-pipeline]');
-    const pin = document.querySelector('[data-hero-pin]');
-    if (!panel || !pin) return;
-    const inner = pin.querySelector('.hero-pin-inner');
-    const steps = panel.querySelectorAll('.pipe-step');
-    const stages = panel.querySelectorAll('.pipe-stage');
-    const bar = panel.querySelector('.pipe-progress-bar');
-    const timer = panel.querySelector('[data-pipe-timer]');
-    const decodeVals = Array.from(panel.querySelectorAll('.pipe-decode-val'));
-    const checkBadges = Array.from(panel.querySelectorAll('.pipe-checks b'));
-    const TIMES = [0.4, 1.3, 2.4, 3.2];
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const desktop = window.matchMedia('(min-width: 1025px)');
+  // --- Hero visual: Document-anchored 4-stage processing workflow ---
+  // The central invoice file is the anchor from which each processing card
+  // emerges forward into the crisp foreground, processes its stage, and smoothly
+  // returns into the document before the next stage emerges.
+  (function initWorkflow() {
+    const hub = document.querySelector('[data-pipeline]');
+    if (!hub) return;
 
-    if (reduce.matches) {
-      panel.classList.add('is-static');
+    const steps = Array.from(hub.querySelectorAll('.pipe-step'));
+    const stages = Array.from(hub.querySelectorAll('.pipe-stage'));
+    const bar = hub.querySelector('.pipe-progress-bar');
+    const timer = hub.querySelector('[data-pipe-timer]');
+    const TIMES = [0.4, 1.3, 2.4, 3.2];
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (reduceMotion.matches) {
+      hub.classList.add('is-static');
       if (timer) timer.textContent = '3.2 s';
-      decodeVals.forEach(el => {
-        el.textContent = el.getAttribute('data-final') || el.textContent;
-      });
       return;
     }
 
-    let current = -1;
-    let shownTime = 0;
+    let current = 0;
+    let autoTimer = null;
+    let isTransitioning = false;
+    let isVisible = true;
+
+    // Smooth timer countdown interpolation
+    let shownTime = TIMES[0];
     let timerFrame = null;
     function animateTimer(target) {
       cancelAnimationFrame(timerFrame);
       const from = shownTime, start = performance.now();
       const step = (now) => {
-        const t = Math.min(1, (now - start) / 600);
+        const t = Math.min(1, (now - start) / 480);
         shownTime = from + (target - from) * (1 - Math.pow(1 - t, 3));
         if (timer) timer.textContent = `${shownTime.toFixed(1)} s`;
         if (t < 1) timerFrame = requestAnimationFrame(step);
@@ -586,139 +585,93 @@ document.addEventListener('DOMContentLoaded', () => {
       timerFrame = requestAnimationFrame(step);
     }
 
-    // Enterprise OCR / Document intelligence scroll-driven decode resolution
-    function renderDecode(stage, progress) {
-      if (decodeVals.length === 0) return;
+    function setStage(nextIdx, isAuto = false) {
+      if (nextIdx === current && isTransitioning) return;
+      isTransitioning = true;
 
-      // Stage 0 (Capture): data is raw / unextracted
-      if (stage === 0) {
-        decodeVals.forEach(el => {
-          const raw = el.getAttribute('data-raw') || el.getAttribute('data-final') || '';
-          el.textContent = raw;
-          el.style.filter = 'blur(1.2px)';
-          el.style.opacity = '0.75';
-          el.classList.remove('is-resolving');
-        });
-        checkBadges.forEach(b => {
-          b.textContent = 'Evaluating...';
-          b.classList.add('evaluating');
-        });
-        return;
+      const prevIdx = current;
+      current = nextIdx;
+
+      // 1. Return previous card back into the anchor document
+      if (prevIdx !== nextIdx && stages[prevIdx]) {
+        stages[prevIdx].classList.remove('is-active', 'is-idle');
+        stages[prevIdx].classList.add('is-returning');
+
+        setTimeout(() => {
+          stages[prevIdx].classList.remove('is-returning');
+          stages[prevIdx].classList.add('is-idle');
+        }, 460);
       }
 
-      // Stage 1 (Understand / AI field extraction): progressive character & field decode
-      if (stage === 1) {
-        const pStage2 = progress == null ? 1 : Math.min(1, Math.max(0, (progress - 0.22) / 0.25));
-        
-        decodeVals.forEach((el, idx) => {
-          const finalStr = el.getAttribute('data-final') || el.textContent;
-          const rawStr = el.getAttribute('data-raw') || finalStr;
-          
-          const stagger = idx * 0.08;
-          const localP = Math.min(1, Math.max(0, (pStage2 - stagger) / 0.55));
-          
-          if (localP >= 1) {
-            el.textContent = finalStr;
-            el.style.filter = 'none';
-            el.style.opacity = '1';
-            el.classList.remove('is-resolving');
-          } else if (localP <= 0) {
-            el.textContent = rawStr;
-            el.style.filter = 'blur(1.2px)';
-            el.style.opacity = '0.75';
-            el.classList.remove('is-resolving');
-          } else {
-            const charCount = Math.floor(localP * finalStr.length);
-            const resolved = finalStr.slice(0, charCount);
-            const rawPart = rawStr.slice(charCount);
-            el.textContent = resolved + rawPart.slice(0, Math.max(0, finalStr.length - charCount));
-            el.style.filter = `blur(${((1 - localP) * 1.2).toFixed(1)}px)`;
-            el.style.opacity = (0.75 + localP * 0.25).toFixed(2);
-            el.classList.add('is-resolving');
+      // 2. Emerging next card from within/behind the anchor document with slight overlap
+      setTimeout(() => {
+        stages.forEach((stage, idx) => {
+          if (idx === nextIdx) {
+            stage.classList.remove('is-idle', 'is-returning');
+            stage.classList.add('is-active');
+          } else if (idx !== prevIdx) {
+            stage.classList.remove('is-active', 'is-returning');
+            stage.classList.add('is-idle');
           }
         });
 
-        checkBadges.forEach(b => {
-          b.textContent = 'Evaluating...';
-          b.classList.add('evaluating');
-        });
-        return;
-      }
-
-      // Stage 2 (Validate): fields 100% resolved, checks resolve progressively
-      if (stage === 2) {
-        decodeVals.forEach(el => {
-          el.textContent = el.getAttribute('data-final') || el.textContent;
-          el.style.filter = 'none';
-          el.style.opacity = '1';
-          el.classList.remove('is-resolving');
+        // Update nav steps
+        steps.forEach((step, idx) => {
+          step.classList.toggle('is-active', idx === nextIdx);
+          step.classList.toggle('is-done', idx < nextIdx);
         });
 
-        const pStage3 = progress == null ? 1 : Math.min(1, Math.max(0, (progress - 0.48) / 0.25));
-        const checkThresholds = [0.15, 0.38, 0.62, 0.85];
+        // Update progress bar
+        if (bar) {
+          bar.style.width = `${(nextIdx + 1) * 25}%`;
+        }
 
-        checkBadges.forEach((b, idx) => {
-          const targetText = b.getAttribute('data-status') || b.textContent;
-          const th = checkThresholds[idx] || 0.5;
-          if (pStage3 >= th) {
-            b.textContent = targetText;
-            b.classList.remove('evaluating');
-          } else {
-            b.textContent = 'Evaluating...';
-            b.classList.add('evaluating');
-          }
-        });
-        return;
-      }
+        // Animate timer
+        animateTimer(TIMES[nextIdx]);
 
-      // Stage 3 (Post): everything is verified, posted, and complete
-      if (stage === 3) {
-        decodeVals.forEach(el => {
-          el.textContent = el.getAttribute('data-final') || el.textContent;
-          el.style.filter = 'none';
-          el.style.opacity = '1';
-          el.classList.remove('is-resolving');
-        });
-        checkBadges.forEach(b => {
-          b.textContent = b.getAttribute('data-status') || b.textContent;
-          b.classList.remove('evaluating');
-        });
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 300);
+      }, prevIdx === nextIdx ? 0 : 160);
+
+      if (!isAuto) {
+        resetAuto();
       }
     }
 
-    function setStage(i, progress) {
-      if (bar) bar.style.width = `${progress == null ? (i + 1) * 25 : Math.max(4, progress * 100)}%`;
-      renderDecode(i, progress);
-      if (i === current) return;
-      current = i;
-      steps.forEach((el, n) => {
-        el.classList.toggle('is-active', n === i);
-        el.classList.toggle('is-done', n < i);
-      });
-      stages.forEach((el, n) => {
-        el.classList.toggle('is-active', n === i);
-        el.classList.toggle('is-past', n < i);
-      });
-      animateTimer(TIMES[i]);
+    function nextStage() {
+      const nextIdx = (current + 1) % stages.length;
+      setStage(nextIdx, true);
     }
 
-    // Step interaction: hover, focus, and click activate stage immediately
-    steps.forEach((step, index) => {
+    function startAuto() {
+      if (autoTimer || reduceMotion.matches) return;
+      autoTimer = setInterval(() => {
+        if (!document.hidden && isVisible) {
+          nextStage();
+        }
+      }, 3800);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    function resetAuto() {
+      stopAuto();
+      startAuto();
+    }
+
+    // Step navigation interactions
+    steps.forEach((step, idx) => {
       step.setAttribute('tabindex', '0');
       step.setAttribute('role', 'button');
+      step.setAttribute('aria-label', `Stage ${idx + 1}: ${step.textContent.trim()}`);
 
-      const activate = () => {
-        setStage(index);
-        autoStage = index;
-        if (autoTimer) {
-          clearInterval(autoTimer);
-          autoTimer = null;
-          startAuto();
-        }
-      };
-
-      step.addEventListener('mouseenter', activate);
-      step.addEventListener('focusin', activate);
+      const activate = () => setStage(idx);
       step.addEventListener('click', activate);
       step.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -728,81 +681,36 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Auto-play loop: state -> calm pause (4.5s) -> smooth transition -> calm pause
-    let autoTimer = null;
-    let autoStage = 0;
-    function startAuto() {
-      if (autoTimer) return;
-      autoTimer = setInterval(() => {
-        if (document.hidden) return;
-        autoStage = (autoStage + 1) % 4;
-        setStage(autoStage);
-      }, 4500);
-    }
-    function stopAuto() {
-      clearInterval(autoTimer);
-      autoTimer = null;
-    }
+    // Pause on hover so user can read the active card uninterrupted
+    hub.addEventListener('mouseenter', stopAuto);
+    hub.addEventListener('mouseleave', () => {
+      if (isVisible && !document.hidden) startAuto();
+    });
 
-    let visible = true;
+    // IntersectionObserver: run only when in viewport
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver((entries) => {
-        visible = entries[0].isIntersecting;
-        if (!desktop.matches) visible ? startAuto() : stopAuto();
-      }, { threshold: 0.2 }).observe(panel);
-    }
-
-    // Pinned scroll mode (desktop)
-    let pinStart = 0, pinTravel = 1, stickyTop = 0, ticking = false;
-    function measure() {
-      if (!desktop.matches) {
-        pin.classList.remove('is-pinned');
-        pin.style.height = '';
-        inner.style.top = '';
-        return;
-      }
-      pin.classList.add('is-pinned');
-      const vh = window.innerHeight;
-      const innerH = inner.offsetHeight;
-      stickyTop = Math.min(0, vh - innerH);
-      inner.style.top = `${stickyTop}px`;
-      pinTravel = Math.round(vh * 1.3);
-      pin.style.height = `${innerH + pinTravel}px`;
-      pinStart = pin.getBoundingClientRect().top + window.scrollY;
-    }
-    function onScroll() {
-      if (!desktop.matches) return;
-      const progress = (window.scrollY - pinStart + stickyTop) / pinTravel;
-      if (progress <= 0.02) {
-        startAuto();
-        return;
-      }
-      stopAuto();
-      const p = Math.min(1, Math.max(0, progress));
-      autoStage = Math.min(3, Math.floor(p * 4));
-      setStage(autoStage, p);
-    }
-
-    setStage(0);
-    measure();
-    if (desktop.matches) {
-      onScroll();
-      if (window.scrollY <= 2) startAuto();
+      const observer = new IntersectionObserver((entries) => {
+        isVisible = entries[0].isIntersecting;
+        if (isVisible) startAuto(); else stopAuto();
+      }, { threshold: 0.15 });
+      observer.observe(hub);
     } else {
       startAuto();
     }
-    window.addEventListener('scroll', () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => { onScroll(); ticking = false; });
-    }, { passive: true });
-    window.addEventListener('resize', () => { measure(); onScroll(); });
-    window.addEventListener('load', () => { measure(); onScroll(); });
-    desktop.addEventListener('change', () => {
-      stopAuto();
-      measure();
-      if (desktop.matches) onScroll(); else startAuto();
+
+    // Tab visibility
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAuto();
+      else if (isVisible) startAuto();
     });
+
+    // Initial state: Stage 0 is active, others are idle inside file
+    stages.forEach((stage, idx) => {
+      stage.classList.toggle('is-active', idx === 0);
+      stage.classList.toggle('is-idle', idx !== 0);
+    });
+    setStage(0);
+    startAuto();
   })();
 
   // --- Hero word rotator: cycles through the processes we automate ---

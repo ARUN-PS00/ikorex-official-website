@@ -139,8 +139,6 @@
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
     <div class="hero-cursor-field" aria-hidden="true"></div>
-    <div class="hero-pin" data-hero-pin>
-      <div class="hero-pin-inner">
     <div class="section-container hero-grid">
       <div class="hero-content">
         <div class="custom-badge animate-fade-in" style="animation-delay: 0.1s;">
@@ -220,68 +218,126 @@
         </div>
       </div>
 
-      <!-- Hero visual: one invoice, start to finish (scroll-driven on desktop) -->
+      <!-- Hero visual: Document-anchored 4-stage workflow -->
       <div class="hero-visual">
-        <div class="pipeline glass" data-pipeline>
-          <ol class="pipe-steps" aria-label="How an invoice moves through iKOREX">
-            <li class="pipe-step is-active"><span class="pipe-dot">1</span><span>Capture</span></li>
-            <li class="pipe-step"><span class="pipe-dot">2</span><span>Understand</span></li>
-            <li class="pipe-step"><span class="pipe-dot">3</span><span>Validate</span></li>
-            <li class="pipe-step"><span class="pipe-dot">4</span><span>Post</span></li>
-          </ol>
-          <div class="pipe-progress" aria-hidden="true"><span class="pipe-progress-bar"></span></div>
+        <div class="workflow-hub" data-pipeline>
+          
+          <!-- Stage Indicator: floating minimalist step track -->
+          <div class="workflow-nav" aria-label="Workflow processing stages">
+            <ol class="pipe-steps">
+              <li class="pipe-step is-active" data-step="0"><span class="pipe-dot">1</span><span>Capture</span></li>
+              <li class="pipe-step" data-step="1"><span class="pipe-dot">2</span><span>Understand</span></li>
+              <li class="pipe-step" data-step="2"><span class="pipe-dot">3</span><span>Validate</span></li>
+              <li class="pipe-step" data-step="3"><span class="pipe-dot">4</span><span>Post</span></li>
+            </ol>
+            <div class="pipe-progress" aria-hidden="true"><span class="pipe-progress-bar"></span></div>
+          </div>
 
-          <div class="pipe-stage-area">
-            <div class="pipe-stage is-active">
-              <span class="pipe-kicker">01 &middot; Capture</span>
-              <h3 class="pipe-title">Invoices arrive from anywhere</h3>
-              <ul class="pipe-sources">
-                <li><span class="pipe-src-icon mail" aria-hidden="true">@</span>Email attachment &middot; INV-2041.pdf</li>
-                <li><span class="pipe-src-icon wa" aria-hidden="true">W</span>WhatsApp photo from the site manager</li>
-                <li><span class="pipe-src-icon portal" aria-hidden="true">P</span>Supplier portal upload</li>
-              </ul>
-            </div>
-            <div class="pipe-stage">
-              <span class="pipe-kicker">02 &middot; Understand</span>
-              <h3 class="pipe-title">AI reads the fields, not just the text</h3>
-              <div class="pipe-doc" data-pipe-doc>
-                <span class="pipe-scan" aria-hidden="true"></span>
-                <div><span>Supplier</span><b class="pipe-decode-val" data-raw="ACME SUPPLIES PTY LTD [RAW]" data-final="Acme Supplies Pty Ltd">Acme Supplies Pty Ltd</b></div>
-                <div><span>Invoice no.</span><b class="pipe-decode-val" data-raw="INV ···· 2041" data-final="INV-2041">INV-2041</b></div>
-                <div><span>PO reference</span><b class="pipe-decode-val" data-raw="PO ···· 0778" data-final="PO-0778">PO-0778</b></div>
-                <div><span>Total incl. GST</span><b class="pipe-decode-val" data-raw="$ ·,···.··" data-final="$4,820.00">$4,820.00</b></div>
-                <div><span>Due</span><b class="pipe-decode-val" data-raw="NET 30 DAYS" data-final="30 days">30 days</b></div>
-                <div><span>Confidence</span><b class="pipe-decode-val ok" data-raw="ANALYZING..." data-final="High">High</b></div>
+          <!-- Central File Anchor + Emerging Processing Stage Cards -->
+          <div class="workflow-viewport">
+            
+            <!-- Central Anchor Document (The File Being Processed) -->
+            <div class="doc-anchor-file" aria-hidden="true">
+              <div class="doc-file-top">
+                <div class="doc-file-id-badge">
+                  <span class="doc-file-badge">PDF</span>
+                  <span class="doc-file-name">INV-2041.pdf</span>
+                </div>
+                <div class="doc-file-live">
+                  <span class="doc-pulse-dot"></span>
+                  <span>AI Ingestion Active</span>
+                </div>
+              </div>
+              <div class="doc-file-meta-row">
+                <div class="doc-meta-col">
+                  <span class="doc-meta-lbl">SUPPLIER</span>
+                  <strong class="doc-meta-val">Acme Supplies Pty Ltd</strong>
+                </div>
+                <div class="doc-meta-col text-right">
+                  <span class="doc-meta-lbl">AMOUNT</span>
+                  <strong class="doc-meta-val">$4,820.00</strong>
+                </div>
+              </div>
+              <div class="doc-file-preview-lines">
+                <span class="doc-file-line l1"></span>
+                <span class="doc-file-line l2"></span>
+                <span class="doc-file-line l3"></span>
+                <span class="doc-file-line l4"></span>
               </div>
             </div>
-            <div class="pipe-stage">
-              <span class="pipe-kicker">03 &middot; Validate</span>
-              <h3 class="pipe-title">Checked before anyone has to look</h3>
-              <ul class="pipe-checks">
-                <li><span>Matches purchase order PO-0778</span><b data-status="Pass">Pass</b></li>
-                <li><span>Goods receipt recorded</span><b data-status="Pass">Pass</b></li>
-                <li><span>Amount within tolerance</span><b data-status="Pass">Pass</b></li>
-                <li><span>Duplicate check</span><b data-status="None found">None found</b></li>
-              </ul>
-            </div>
-            <div class="pipe-stage">
-              <span class="pipe-kicker">04 &middot; Post &amp; notify</span>
-              <h3 class="pipe-title">Posted to your books, team in the loop</h3>
-              <div class="pipe-posted">
-                <div><span>Accounting</span><b>Bill created in Xero / MYOB</b></div>
-                <div><span>Approval</span><b>Routed to finance manager</b></div>
+
+            <!-- Stage Cards emerging forward from the anchor file -->
+            <div class="workflow-stage-deck">
+              
+              <!-- Stage 1: Capture -->
+              <div class="pipe-stage is-active" data-stage="0">
+                <div class="pipe-stage-header">
+                  <span class="pipe-kicker">01 &middot; Capture</span>
+                  <span class="pipe-stage-tag">Multi-Channel Ingestion</span>
+                </div>
+                <h3 class="pipe-title">Invoices arrive from anywhere</h3>
+                <ul class="pipe-sources">
+                  <li><span class="pipe-src-icon mail" aria-hidden="true">@</span>Email attachment &middot; INV-2041.pdf</li>
+                  <li><span class="pipe-src-icon wa" aria-hidden="true">W</span>WhatsApp photo from the site manager</li>
+                  <li><span class="pipe-src-icon portal" aria-hidden="true">P</span>Supplier portal upload</li>
+                </ul>
               </div>
-              <div class="pipe-toast"><span class="live-dot" aria-hidden="true"></span>Approver notified on Slack &middot; audit trail saved</div>
+
+              <!-- Stage 2: Understand -->
+              <div class="pipe-stage" data-stage="1">
+                <div class="pipe-stage-header">
+                  <span class="pipe-kicker">02 &middot; Understand</span>
+                  <span class="pipe-stage-tag">Cognitive Extraction</span>
+                </div>
+                <h3 class="pipe-title">AI reads the fields, not just the text</h3>
+                <div class="pipe-doc" data-pipe-doc>
+                  <div><span>Supplier</span><b class="pipe-decode-val" data-final="Acme Supplies Pty Ltd">Acme Supplies Pty Ltd</b></div>
+                  <div><span>Invoice no.</span><b class="pipe-decode-val" data-final="INV-2041">INV-2041</b></div>
+                  <div><span>PO reference</span><b class="pipe-decode-val" data-final="PO-0778">PO-0778</b></div>
+                  <div><span>Total incl. GST</span><b class="pipe-decode-val" data-final="$4,820.00">$4,820.00</b></div>
+                  <div><span>Due</span><b class="pipe-decode-val" data-final="30 days">30 days</b></div>
+                  <div><span>Confidence</span><b class="pipe-decode-val ok" data-final="High">High (99.8%)</b></div>
+                </div>
+              </div>
+
+              <!-- Stage 3: Validate -->
+              <div class="pipe-stage" data-stage="2">
+                <div class="pipe-stage-header">
+                  <span class="pipe-kicker">03 &middot; Validate</span>
+                  <span class="pipe-stage-tag">Automated Verification</span>
+                </div>
+                <h3 class="pipe-title">Checked before anyone has to look</h3>
+                <ul class="pipe-checks">
+                  <li><span>Matches purchase order PO-0778</span><b data-status="Pass">Pass &check;</b></li>
+                  <li><span>Goods receipt recorded</span><b data-status="Pass">Pass &check;</b></li>
+                  <li><span>Amount within tolerance</span><b data-status="Pass">Pass &check;</b></li>
+                  <li><span>Duplicate check</span><b data-status="None found">None found &check;</b></li>
+                </ul>
+              </div>
+
+              <!-- Stage 4: Post -->
+              <div class="pipe-stage" data-stage="3">
+                <div class="pipe-stage-header">
+                  <span class="pipe-kicker">04 &middot; Post &amp; notify</span>
+                  <span class="pipe-stage-tag">Ledger &amp; Approver Sync</span>
+                </div>
+                <h3 class="pipe-title">Posted to your books, team in the loop</h3>
+                <div class="pipe-posted">
+                  <div><span>Accounting</span><b>Bill created in Xero / MYOB</b></div>
+                  <div><span>Approval</span><b>Routed to finance manager</b></div>
+                </div>
+                <div class="pipe-toast"><span class="live-dot" aria-hidden="true"></span>Approver notified on Slack &middot; audit trail saved</div>
+              </div>
+
             </div>
           </div>
 
+          <!-- Benchmark Comparison Footer -->
           <div class="pipe-compare">
             <div class="pipe-metric manual"><span>Manual process</span><strong>4.8 hrs</strong></div>
             <div class="pipe-metric auto"><span>With iKOREX</span><strong data-pipe-timer>0.4 s</strong></div>
           </div>
         </div>
-      </div>
-    </div>
       </div>
     </div>
 
