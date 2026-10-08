@@ -51,11 +51,25 @@
     href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
   <script>
-    try { if (sessionStorage.getItem('ikx-intro-seen')) document.documentElement.classList.add('intro-seen'); } catch (e) { }
+    try { if (sessionStorage.getItem('ikx-intro-seen') || window.location.search.includes('no-intro')) document.documentElement.classList.add('intro-seen'); } catch (e) { }
+    (function () {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        const s = p.get('scroll');
+        if (s) {
+          window.addEventListener('load', function () {
+            setTimeout(function () {
+              const el = document.getElementById(s);
+              if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+            }, 80);
+          });
+        }
+      } catch (e) { }
+    })();
   </script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 
 <body>
@@ -69,6 +83,9 @@
       } catch (e) { }
     })();
   </script>
+
+  <!-- Homepage Reactive Star / Node Background Canvas -->
+  <canvas class="homepage-network-canvas" id="homepageNetworkCanvas" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; display: block; opacity: 1;"></canvas>
 
   <!-- Preloader -->
   <div id="preloader">
@@ -138,7 +155,6 @@
 
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
-    <canvas class="hero-network-canvas" id="heroNetworkCanvas" aria-hidden="true"></canvas>
     <div class="section-container hero-grid">
       <div class="hero-content">
         <div class="custom-badge animate-fade-in" style="animation-delay: 0.1s;">
@@ -929,6 +945,268 @@
     </div>
   </section>
 
+  <!-- Services Horizontal Journey Section -->
+  <section class="services-section services-journey-section" id="services" aria-label="Our Core Services">
+    <div class="services-journey-pinned">
+      <div class="services-sticky-viewport">
+        <div class="section-container services-header-wrap">
+          <div class="services-header-content">
+            <div class="custom-badge">
+              <span class="badge-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" class="badge-svg" aria-hidden="true">
+                  <path d="M3 3 L21 12 L8 12 L3 9 Z" fill="#00a2ff" />
+                  <path d="M3 21 L21 12 L8 12 L3 15 Z" fill="#0062d6" />
+                </svg>
+              </span>
+              <span class="badge-text">What We Deliver</span>
+            </div>
+            <h2 class="section-title">Three Services. <span class="text-gradient">One Accountable Team.</span></h2>
+            <p class="section-subtitle">Workflow automation, AI vision, and finance operations, designed around the systems you already run.</p>
+          </div>
+          <div class="services-track-indicator" aria-label="Services scroll progress">
+            <div class="services-indicator-tabs">
+              <button class="track-tab is-active" type="button" data-service-idx="0" onclick="if(window.ikxServicesGoTo){window.ikxServicesGoTo(0);}return false;"><span>01</span> RPA &amp; Workflow</button>
+              <button class="track-tab" type="button" data-service-idx="1" onclick="if(window.ikxServicesGoTo){window.ikxServicesGoTo(1);}return false;"><span>02</span> AI Vision</button>
+              <button class="track-tab" type="button" data-service-idx="2" onclick="if(window.ikxServicesGoTo){window.ikxServicesGoTo(2);}return false;"><span>03</span> Finance Engine</button>
+            </div>
+            <div class="services-progress-rail">
+              <div class="services-progress-bar" id="servicesProgressBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          window.ikxServicesMove = window.ikxServicesMove || function(dir) {
+            var track = document.getElementById('servicesJourneyTrack');
+            var cards = track ? Array.from(track.querySelectorAll('.service-journey-card')) : [];
+            var tabs = Array.from(document.querySelectorAll('#services .track-tab'));
+            var bar = document.getElementById('servicesProgressBar');
+            if (!track || !cards.length) return;
+            var cur = cards.findIndex(function(c) { return c.classList.contains('is-active'); });
+            if (cur === -1) cur = 0;
+            var next = ((cur + dir) % cards.length + cards.length) % cards.length;
+            track.style.transition = 'transform 550ms cubic-bezier(0.22, 1, 0.36, 1)';
+            track.style.setProperty('transform', 'translate3d(-' + (next * 100) + '%, 0, 0)', 'important');
+            cards.forEach(function(c, i) { c.classList.toggle('is-active', i === next); });
+            tabs.forEach(function(t, i) { t.classList.toggle('is-active', i === next); });
+            if (bar) bar.style.width = (((next + 1) / cards.length) * 100) + '%';
+          };
+          window.ikxServicesGoTo = window.ikxServicesGoTo || function(idx) {
+            var track = document.getElementById('servicesJourneyTrack');
+            var cards = track ? Array.from(track.querySelectorAll('.service-journey-card')) : [];
+            var tabs = Array.from(document.querySelectorAll('#services .track-tab'));
+            var bar = document.getElementById('servicesProgressBar');
+            if (!track || !cards.length) return;
+            var target = ((idx % cards.length) + cards.length) % cards.length;
+            track.style.transition = 'transform 550ms cubic-bezier(0.22, 1, 0.36, 1)';
+            track.style.setProperty('transform', 'translate3d(-' + (target * 100) + '%, 0, 0)', 'important');
+            cards.forEach(function(c, i) { c.classList.toggle('is-active', i === target); });
+            tabs.forEach(function(t, i) { t.classList.toggle('is-active', i === target); });
+            if (bar) bar.style.width = (((target + 1) / cards.length) * 100) + '%';
+          };
+        </script>
+
+        <!-- Centered Services Carousel with Side Navigation Arrows -->
+        <div class="services-carousel-wrapper">
+          <button class="services-carousel-prev" id="servicesCarouselPrev" type="button" aria-label="Previous service slide" onclick="if(window.ikxServicesMove){window.ikxServicesMove(-1);}return false;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <!-- Horizontal Track Container -->
+          <div class="services-track-shell" id="servicesTrackShell">
+            <div class="services-journey-track" id="servicesJourneyTrack">
+
+            <!-- Service Card 01: RPA & Workflow -->
+            <article class="service-journey-card is-active" data-service-card="0">
+              <div class="s-card-media-wrap">
+                <video src="assets/images/rpa-workflow.mp4" poster="assets/images/services-rpa-workflow.webp" autoplay loop muted playsinline preload="metadata" class="s-card-media-video">
+                  <img src="assets/images/services-rpa-workflow.webp" alt="RPA &amp; Workflow Re-engineering" class="s-card-media-video">
+                </video>
+                <div class="s-card-badge">
+                  <span class="s-badge-dot"></span>
+                  <span>Workflow Bot</span>
+                </div>
+              </div>
+              <div class="s-card-body">
+                <div class="s-card-header">
+                  <span class="s-card-num">01</span>
+                  <div class="s-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="s-card-title">RPA &amp; Workflow Re-engineering</h3>
+                <p class="s-card-desc">Software bots take over the repetitive steps in your existing apps, so transactions move in seconds instead of hours. We audit each process first and remove the waste before we automate it.</p>
+
+                <!-- Internal Service Motion Sequence: Input -> Automation -> Output -->
+                <div class="s-card-pipeline" aria-label="Process automation pipeline">
+                  <div class="pipeline-node node-in">
+                    <span class="p-node-label">INPUT</span>
+                    <strong class="p-node-val">Legacy ERP / Dockets</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-mid">
+                    <span class="p-node-label">AUTOMATION</span>
+                    <strong class="p-node-val">24/7 RPA Engine</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-out">
+                    <span class="p-node-label">RESULT</span>
+                    <strong class="p-node-val text-green">Instant Sync (0.3s)</strong>
+                  </div>
+                </div>
+
+                <ul class="s-card-features">
+                  <li>Cross-system data synchronization architecture</li>
+                  <li>UiPath &amp; Microsoft Power Automate deployment</li>
+                  <li>Lean Six Sigma process footprint modernization</li>
+                </ul>
+
+                <div class="s-card-cta">
+                  <a href="services.html" class="s-card-link">Explore RPA service <span class="arrow">&rarr;</span></a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Service Card 02: AI Camera Security Monitoring -->
+            <article class="service-journey-card" data-service-card="1">
+              <div class="s-card-media-wrap">
+                <img src="assets/images/services-ai-security.webp" alt="AI Camera Security Monitoring" class="s-card-media-video" loading="lazy">
+                <div class="s-card-badge">
+                  <span class="s-badge-dot"></span>
+                  <span>AI Detection</span>
+                </div>
+              </div>
+              <div class="s-card-body">
+                <div class="s-card-header">
+                  <span class="s-card-num">02</span>
+                  <div class="s-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="s-card-title">AI Camera Security Monitoring</h3>
+                <p class="s-card-desc">Computer vision that works with the cameras you already have. It spots concealment behaviour in real time and alerts your floor team with a short video clip, so losses are stopped as they happen.</p>
+
+                <!-- Internal Service Motion Sequence: Input -> Automation -> Output -->
+                <div class="s-card-pipeline" aria-label="Process automation pipeline">
+                  <div class="pipeline-node node-in">
+                    <span class="p-node-label">INPUT</span>
+                    <strong class="p-node-val">Existing CCTV Feeds</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-mid">
+                    <span class="p-node-label">ANALYSIS</span>
+                    <strong class="p-node-val">Behavioral AI Model</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-out">
+                    <span class="p-node-label">RESULT</span>
+                    <strong class="p-node-val text-green">Instant Clip &amp; Alert</strong>
+                  </div>
+                </div>
+
+                <ul class="s-card-features">
+                  <li>Advanced in-aisle gesture classification models</li>
+                  <li>Instant on-floor smart alerts with short proof clips</li>
+                  <li>100% face-free, anonymous behavioral profiling</li>
+                </ul>
+
+                <div class="s-card-cta">
+                  <a href="services.html" class="s-card-link">Explore AI vision service <span class="arrow">&rarr;</span></a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Service Card 03: Accounting, Bookkeeping & Financial Reporting -->
+            <article class="service-journey-card" data-service-card="2">
+              <div class="s-card-media-wrap">
+                <img src="assets/images/services-financial-reporting.webp" alt="Accounting, Bookkeeping &amp; Financial Reporting" class="s-card-media-video" loading="lazy">
+                <div class="s-card-badge">
+                  <span class="s-badge-dot"></span>
+                  <span>Financial AI</span>
+                </div>
+              </div>
+              <div class="s-card-body">
+                <div class="s-card-header">
+                  <span class="s-card-num">03</span>
+                  <div class="s-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="s-card-title">Accounting, Bookkeeping &amp; Financial Reporting</h3>
+                <p class="s-card-desc">Reliable day-to-day bookkeeping and reporting, backed by automation. Your numbers stay current, reconciled, and compliant with Australian standards.</p>
+
+                <!-- Internal Service Motion Sequence: Input -> Automation -> Output -->
+                <div class="s-card-pipeline" aria-label="Process automation pipeline">
+                  <div class="pipeline-node node-in">
+                    <span class="p-node-label">INPUT</span>
+                    <strong class="p-node-val">Bank Feeds &amp; Invoices</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-mid">
+                    <span class="p-node-label">GOVERNANCE</span>
+                    <strong class="p-node-val">CA Matching Engine</strong>
+                  </div>
+                  <div class="pipeline-connector">
+                    <span class="p-stream-line"></span>
+                    <span class="p-stream-pulse"></span>
+                  </div>
+                  <div class="pipeline-node node-out">
+                    <span class="p-node-label">RESULT</span>
+                    <strong class="p-node-val text-green">Automated GL Post</strong>
+                  </div>
+                </div>
+
+                <ul class="s-card-features">
+                  <li>Daily reconciliation, ledger audits, and tech setups (Xero, MYOB)</li>
+                  <li>Full AASB &amp; IFRS statement frameworks and compliance reporting</li>
+                  <li>Live budget variations, job costing, and automated CFO panels</li>
+                </ul>
+
+                <div class="s-card-cta">
+                  <a href="services.html" class="s-card-link">Explore finance service <span class="arrow">&rarr;</span></a>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <button class="services-carousel-next" id="servicesCarouselNext" type="button" aria-label="Next service slide" onclick="if(window.ikxServicesMove){window.ikxServicesMove(1);}return false;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Risk Removed Section -->
   <section class="risk-section" id="risk-removed">
     <div class="section-container">
@@ -1109,7 +1387,7 @@
           </div>
 
           <!-- Structural Branching Architecture Visual: One Core Engine branching into 5 sectors -->
-          <div class="card-visual-compact viz viz-industry-branch" data-viz aria-label="One Core Automation Engine Structural Branching">
+          <div class="card-visual-branch viz viz-industry-branch" data-viz aria-label="One Core Automation Engine Structural Branching">
             <div class="industry-nav-pills" role="tablist" aria-label="Industry engine modes">
               <button class="ind-pill is-active" type="button" data-ind="retail">Retail</button>
               <button class="ind-pill" type="button" data-ind="mfg">Manufacturing</button>
@@ -1158,7 +1436,7 @@
             <p class="capability-body">Designed alongside Chartered Accountants with immutable audit trails and 3-way validation.</p>
           </div>
 
-          <div class="card-visual-compact viz viz-audit" data-viz aria-hidden="true">
+          <div class="card-visual-audit viz viz-audit" data-viz aria-hidden="true">
             <div class="viz-audit-header">
               <span class="viz-audit-title">Live Audit Log &middot; Immutable</span>
               <span class="viz-audit-status">100% Verified</span>
@@ -1442,7 +1720,7 @@
   </footer>
 
   <!-- Custom Logic Script -->
-  <script src="main.js?v=7"></script>
+  <script src="main.js?v=12"></script>
 </body>
 
 </html>

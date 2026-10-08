@@ -79,7 +79,7 @@ window.ikxIntroActive = false;
   setTimeout(triggerFadeOut, 3500);
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
+const initApp = () => {
   // --- Theme Toggle ---
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   let savedTheme = null;
@@ -1171,13 +1171,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Homepage Interactive Data / Star / Node Field (Canvas) ---
   // Sophisticated subtle data environment reacting to cursor with spring/damping inertia.
   // Strongest in Hero, gradually subtle down the page. No spotlights or cursor halos.
+  // --- Homepage Interactive Data / Star / Node Field (Canvas) ---
+  // Restrained enterprise data flow reacting to cursor with spring/damping inertia.
   (function initHeroCanvasNetwork() {
-    const canvas = document.getElementById('heroNetworkCanvas');
+    const canvas = document.getElementById('homepageNetworkCanvas');
     if (!canvas) return;
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      return;
-    }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -1185,37 +1183,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let width = 0, height = 0, dpr = 1;
     let animFrame = null;
 
-    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, active: false };
+    let mouse = { x: -2000, y: -2000, targetX: -2000, targetY: -2000, active: false };
 
-    const NODE_COUNT = 52;
-    const CONNECT_DIST = 115;
-    const MOUSE_RADIUS = 180;
+    const NODE_COUNT = 85;
+    const CONNECT_DIST = 165;
+    const MOUSE_RADIUS = 200;
     const nodes = [];
 
     function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      width = window.innerWidth || document.documentElement.clientWidth || 1200;
+      height = window.innerHeight || document.documentElement.clientHeight || 800;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       if (nodes.length === 0) {
         for (let i = 0; i < NODE_COUNT; i++) {
+          const x = Math.random() * width;
+          const y = Math.random() * height;
           nodes.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            baseX: Math.random() * width,
-            baseY: Math.random() * height,
+            x: x,
+            y: y,
+            baseX: x,
+            baseY: y,
             vx: 0,
             vy: 0,
-            radius: 1.0 + Math.random() * 0.7,
+            radius: 2.5 + Math.random() * 1.6,
             orbitAngle: Math.random() * Math.PI * 2,
-            orbitSpeed: (Math.random() - 0.5) * 0.006,
-            pulsePhase: Math.random() * Math.PI * 2,
-            baseAlpha: 0.28 + Math.random() * 0.35
+            orbitSpeed: 0.008 + Math.random() * 0.012,
+            orbitRadius: 12 + Math.random() * 16,
+            pulsePhase: Math.random() * Math.PI * 2
           });
         }
       } else {
@@ -1235,24 +1235,21 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.clearRect(0, 0, width, height);
 
       const isDark = document.body.classList.contains('dark-theme');
-      const scrollY = window.scrollY;
-      // Strongest in Hero, gradually subtle down the page
-      const fadeFactor = Math.max(0.18, 1.0 - (scrollY / 950) * 0.78);
 
-      // Smooth mouse coordinate interpolation
+      // Smooth mouse coordinate interpolation toward target
       if (mouse.active) {
-        mouse.x += (mouse.targetX - mouse.x) * 0.12;
-        mouse.y += (mouse.targetY - mouse.y) * 0.12;
+        mouse.x += (mouse.targetX - mouse.x) * 0.15;
+        mouse.y += (mouse.targetY - mouse.y) * 0.15;
       }
 
       // Update & render nodes
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
 
-        // Micro gentle drift
+        // Continuous micro drift
         n.orbitAngle += n.orbitSpeed;
-        const driftTargetX = n.baseX + Math.cos(n.orbitAngle) * 8;
-        const driftTargetY = n.baseY + Math.sin(n.orbitAngle) * 8;
+        const driftTargetX = n.baseX + Math.cos(n.orbitAngle) * n.orbitRadius;
+        const driftTargetY = n.baseY + Math.sin(n.orbitAngle) * n.orbitRadius;
 
         // Interactive cursor spring repulsion & damping
         if (mouse.active) {
@@ -1261,32 +1258,33 @@ document.addEventListener('DOMContentLoaded', () => {
           const dist = Math.hypot(dx, dy);
 
           if (dist < MOUSE_RADIUS && dist > 0) {
-            const force = (1 - dist / MOUSE_RADIUS) * 24 * fadeFactor;
-            n.vx += (dx / dist) * force * 0.14;
-            n.vy += (dy / dist) * force * 0.14;
+            const force = (1 - dist / MOUSE_RADIUS) * 32;
+            n.vx += (dx / dist) * force * 0.16;
+            n.vy += (dy / dist) * force * 0.16;
           }
         }
 
         // Spring force back to equilibrium
-        const springX = (driftTargetX - n.x) * 0.038;
-        const springY = (driftTargetY - n.y) * 0.038;
-        n.vx = (n.vx + springX) * 0.84;
-        n.vy = (n.vy + springY) * 0.84;
+        const springX = (driftTargetX - n.x) * 0.045;
+        const springY = (driftTargetY - n.y) * 0.045;
+        n.vx = (n.vx + springX) * 0.82;
+        n.vy = (n.vy + springY) * 0.82;
 
         n.x += n.vx;
         n.y += n.vy;
 
-        // Draw connections between nearby nodes (deforms organically with node movement)
+        // Draw connections between nearby nodes (deforms smoothly with node movement)
         for (let j = i + 1; j < nodes.length; j++) {
           const n2 = nodes[j];
           const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
 
           if (dist < CONNECT_DIST) {
-            const lineAlpha = (1 - dist / CONNECT_DIST) * (isDark ? 0.09 : 0.06) * fadeFactor;
+            const proximity = 1 - dist / CONNECT_DIST;
+            const lineAlpha = isDark ? (proximity * 0.45) : (proximity * 0.35);
             ctx.strokeStyle = isDark
-              ? `rgba(56, 189, 248, ${lineAlpha})`
-              : `rgba(0, 102, 204, ${lineAlpha})`;
-            ctx.lineWidth = 0.9;
+              ? `rgba(150, 165, 180, ${lineAlpha.toFixed(3)})`
+              : `rgba(90, 105, 125, ${lineAlpha.toFixed(3)})`;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(n.x, n.y);
             ctx.lineTo(n2.x, n2.y);
@@ -1294,13 +1292,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        // Draw node point (very small crisp dot)
-        n.pulsePhase += 0.02;
-        const pulse = 1 + Math.sin(n.pulsePhase) * 0.15;
-        const nodeAlpha = n.baseAlpha * fadeFactor * (isDark ? 1 : 0.8);
+        // Draw node point (clearly visible restrained data node)
+        n.pulsePhase += 0.03;
+        const pulse = 1 + Math.sin(n.pulsePhase) * 0.12;
+        const nodeAlpha = isDark ? 0.90 : 0.80;
         ctx.fillStyle = isDark
-          ? `rgba(148, 163, 184, ${nodeAlpha})`
-          : `rgba(15, 23, 42, ${nodeAlpha})`;
+          ? `rgba(200, 210, 220, ${nodeAlpha})`
+          : `rgba(71, 85, 105, ${nodeAlpha})`;
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.radius * pulse, 0, Math.PI * 2);
         ctx.fill();
@@ -1322,23 +1320,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    window.addEventListener('pointerenter', (e) => {
-      mouse.targetX = mouse.x = e.clientX;
-      mouse.targetY = mouse.y = e.clientY;
-      mouse.active = true;
-      startLoop();
-    }, { passive: true });
-
-    window.addEventListener('pointermove', (e) => {
+    const onPointerMove = (e) => {
       mouse.targetX = e.clientX;
       mouse.targetY = e.clientY;
-      mouse.active = true;
+      if (!mouse.active) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      }
       startLoop();
-    }, { passive: true });
+    };
 
-    window.addEventListener('pointerleave', () => {
-      mouse.active = false;
-    });
+    window.addEventListener('pointerenter', onPointerMove, { passive: true });
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('mousemove', onPointerMove, { passive: true });
+    window.addEventListener('pointerleave', () => { mouse.active = false; });
 
     let resizeTimer = null;
     window.addEventListener('resize', () => {
@@ -1346,7 +1342,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resizeTimer = setTimeout(() => {
         resize();
         startLoop();
-      }, 100);
+      }, 80);
     }, { passive: true });
 
     window.addEventListener('scroll', () => {
@@ -1707,12 +1703,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Card 3: Friction (Bottom-Left, Span 4)
     // Card 4: Velocity Curve (Bottom-Center, Span 4)
     // Card 5: Economic Benchmarks (Bottom-Right, Span 4)
+    // Stable entrance progression: cards remain firmly locked in their CSS grid columns
     const CARD_OFFSETS = [
-      { x: -56, y: 36,  scale: 0.94, opacity: 0.20, blur: 4 }, // Card 1: Top-Left
-      { x: 52,  y: -28, scale: 0.93, opacity: 0.20, blur: 4 }, // Card 2: Top-Right
-      { x: -44, y: 58,  scale: 0.92, opacity: 0.15, blur: 5 }, // Card 3: Bottom-Left
-      { x: 0,   y: 72,  scale: 0.91, opacity: 0.15, blur: 5 }, // Card 4: Bottom-Center
-      { x: 48,  y: 52,  scale: 0.92, opacity: 0.15, blur: 5 }  // Card 5: Bottom-Right
+      { scale: 0.98, opacity: 0.40 }, // Card 1: Multi-Sector
+      { scale: 0.98, opacity: 0.40 }, // Card 2: CA Governance
+      { scale: 0.98, opacity: 0.40 }, // Card 3: Friction
+      { scale: 0.98, opacity: 0.40 }, // Card 4: Velocity Curve
+      { scale: 0.98, opacity: 0.40 }  // Card 5: Economic Benchmarks
     ];
 
     let ticking = false;
@@ -1741,9 +1738,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Section scroll progression:
-      // Starts resolving when section top enters near 92% of viewport height
-      // Fully resolves into unified architecture when section top reaches 12% of viewport
       const enterY = vh * 0.92;
       const resolveY = vh * 0.12;
       const rawProgress = (enterY - rect.top) / (enterY - resolveY);
@@ -1751,9 +1745,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // CSS Custom property exposed for coordinate styling
       section.style.setProperty('--cap-scroll-progress', progress.toFixed(4));
-
-      const isMobile = window.innerWidth <= 768;
-      const xFactor = isMobile ? 0.25 : 1.0;
 
       // A. Composed Typography Mask Reveal
       if (badge) {
@@ -1764,7 +1755,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (titleLines.length) {
         titleLines.forEach((line, idx) => {
-          // Stagger reveal between line 1 and line 2
           const start = idx === 0 ? 0.04 : 0.14;
           const end = idx === 0 ? 0.48 : 0.60;
           const pLine = Math.min(1, Math.max(0, (progress - start) / (end - start)));
@@ -1785,18 +1775,15 @@ document.addEventListener('DOMContentLoaded', () => {
         subtitle.style.opacity = pSub.toFixed(3);
       }
 
-      // B. Asymmetric Cards Spatial Convergence (Disconnected -> Connected Unified System)
+      // B. Cards Smooth Reveal (Zero spatial displacement to prevent overlap)
       cards.forEach((card, idx) => {
         const cfg = CARD_OFFSETS[idx] || CARD_OFFSETS[0];
-        const curX = (1 - progress) * cfg.x * xFactor;
-        const curY = (1 - progress) * cfg.y;
         const curScale = cfg.scale + (1 - cfg.scale) * progress;
         const curOpacity = cfg.opacity + (1 - cfg.opacity) * progress;
-        const curBlur = (1 - progress) * cfg.blur;
 
-        card.style.transform = `translate3d(${curX.toFixed(2)}px, ${curY.toFixed(2)}px, 0) scale(${curScale.toFixed(4)})`;
+        card.style.transform = `scale(${curScale.toFixed(4)})`;
         card.style.opacity = curOpacity.toFixed(3);
-        card.style.filter = `blur(${curBlur.toFixed(2)}px)`;
+        card.style.filter = '';
       });
 
       // C. Internal Product Dynamics:
@@ -1844,6 +1831,226 @@ document.addEventListener('DOMContentLoaded', () => {
     updateChoreography();
   })();
 
+  // ============================================================
+  // PART 4: SERVICES CONTAINED 3-SLIDE CAROUSEL
+  // ============================================================
+  (function initServicesCarousel() {
+    const servicesSection = document.getElementById('services');
+    const trackShell = document.getElementById('servicesTrackShell');
+    const track = document.getElementById('servicesJourneyTrack');
+    const progressBar = document.getElementById('servicesProgressBar');
+    const prevBtn = document.getElementById('servicesCarouselPrev');
+    const nextBtn = document.getElementById('servicesCarouselNext');
+    if (!servicesSection || !trackShell || !track) return;
+
+    // Clean up any stray clones if present from previous builds
+    track.querySelectorAll('.is-clone').forEach(el => el.remove());
+
+    const cards = Array.from(track.querySelectorAll('.service-journey-card'));
+    const tabs = Array.from(servicesSection.querySelectorAll('.track-tab'));
+    if (!cards.length) return;
+
+    let currentIndex = 0;
+    let autoTimer = null;
+    let isPaused = false;
+    let resumeTimeout = null;
+
+    function goToCard(idx) {
+      currentIndex = ((idx % cards.length) + cards.length) % cards.length;
+
+      // Physically translate the track (0%, -100%, -200%)
+      track.style.transition = 'transform 550ms cubic-bezier(0.22, 1, 0.36, 1)';
+      track.style.setProperty('transform', `translate3d(-${currentIndex * 100}%, 0, 0)`, 'important');
+
+      // Active card indication
+      cards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === currentIndex);
+      });
+
+      // 01 / 02 / 03 navigation controls active state
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('is-active', i === currentIndex);
+      });
+
+      // Progress rail sync
+      if (progressBar) {
+        const pct = ((currentIndex + 1) / cards.length) * 100;
+        progressBar.style.width = `${pct}%`;
+      }
+    }
+
+    function scheduleResume() {
+      clearTimeout(resumeTimeout);
+      resumeTimeout = setTimeout(() => {
+        isPaused = false;
+      }, 5000);
+    }
+
+    function startAutoPlay() {
+      stopAutoPlay();
+      autoTimer = setInterval(() => {
+        if (!isPaused && document.visibilityState === 'visible') {
+          goToCard(currentIndex + 1);
+        }
+      }, 5000);
+    }
+
+    function stopAutoPlay() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    // Global navigation API for buttons and inline onclick fail-safes
+    window.ikxServicesMove = function(direction) {
+      isPaused = true;
+      goToCard(currentIndex + direction);
+      scheduleResume();
+    };
+
+    window.ikxServicesGoTo = function(targetIdx) {
+      isPaused = true;
+      goToCard(targetIdx);
+      scheduleResume();
+    };
+
+    // Global Capture-Phase Click Interceptor to guarantee left/right buttons always fire
+    document.addEventListener('click', (e) => {
+      const prev = e.target.closest('#servicesCarouselPrev, .services-carousel-prev');
+      if (prev) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.ikxServicesMove(-1);
+        return;
+      }
+      const next = e.target.closest('#servicesCarouselNext, .services-carousel-next');
+      if (next) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.ikxServicesMove(1);
+        return;
+      }
+    }, true);
+
+    // Direct event listener on LEFT arrow button
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.ikxServicesMove(-1);
+      });
+      prevBtn.addEventListener('focus', () => { isPaused = true; });
+      prevBtn.addEventListener('blur', () => { scheduleResume(); });
+    }
+
+    // Direct event listener on RIGHT arrow button
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.ikxServicesMove(1);
+      });
+      nextBtn.addEventListener('focus', () => { isPaused = true; });
+      nextBtn.addEventListener('blur', () => { scheduleResume(); });
+    }
+
+    // Connect 01 / 02 / 03 numbered navigation controls
+    tabs.forEach((tab, idx) => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.ikxServicesGoTo(idx);
+      });
+      tab.addEventListener('focus', () => { isPaused = true; });
+      tab.addEventListener('blur', () => { scheduleResume(); });
+    });
+
+    // Keyboard support: ArrowLeft / ArrowRight
+    window.addEventListener('keydown', (e) => {
+      const rect = servicesSection.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!inView) return;
+
+      if (e.key === 'ArrowLeft') {
+        window.ikxServicesMove(-1);
+      } else if (e.key === 'ArrowRight') {
+        window.ikxServicesMove(1);
+      }
+    });
+
+    // Card click selection
+    cards.forEach((card, idx) => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a, button')) return;
+        window.ikxServicesGoTo(idx);
+      });
+    });
+
+    // Pause autoplay on hover/interaction
+    const carouselWrapper = servicesSection.querySelector('.services-carousel-wrapper') || trackShell;
+    carouselWrapper.addEventListener('mouseenter', () => { isPaused = true; });
+    carouselWrapper.addEventListener('mouseleave', () => { scheduleResume(); });
+    carouselWrapper.addEventListener('touchstart', () => { isPaused = true; }, { passive: true });
+    carouselWrapper.addEventListener('touchend', () => { scheduleResume(); }, { passive: true });
+
+    // Initial activation: Slide 01
+    goToCard(0);
+    startAutoPlay();
+  })();
+
+  // ============================================================
+  // PART 3: PREMIUM SCROLL-LINKED PARALLAX SYSTEM
+  // Reversible subtle parallax without grid layout collision
+  // ============================================================
+  (function initCoordinatedParallax() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduceMotion.matches) return;
+
+    const parallaxItems = [
+      { selector: '.comparison-section .section-title, .risk-section .section-title', rate: 0.03 },
+      { selector: '.comparison-card.manual-card', rate: -0.02 },
+      { selector: '.comparison-card.automated-card', rate: 0.02 },
+      { selector: '.risk-card', rate: 0.015 },
+      { selector: '.metric-overlay', rate: -0.02 },
+      { selector: '.blog-card.is-featured', rate: 0.02 }
+    ];
+
+    const elements = [];
+    parallaxItems.forEach(item => {
+      document.querySelectorAll(item.selector).forEach(el => {
+        elements.push({ el, rate: item.rate });
+      });
+    });
+
+    if (!elements.length) return;
+
+    let ticking = false;
+
+    function applyParallax() {
+      const windowHeight = window.innerHeight;
+
+      elements.forEach(item => {
+        const rect = item.el.getBoundingClientRect();
+        if (rect.bottom >= -100 && rect.top <= windowHeight + 100) {
+          const centerDelta = (rect.top + rect.height / 2) - (windowHeight / 2);
+          const yOffset = (centerDelta * item.rate).toFixed(1);
+          item.el.style.transform = `translate3d(0, ${yOffset}px, 0)`;
+        }
+      });
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(applyParallax);
+      }
+    }, { passive: true });
+
+    applyParallax();
+  })();
+
   // --- Bidirectional Scroll Reveal ---
   // Elements gracefully resolve into view on entrance and naturally de-resolve when leaving,
   // working smoothly in both directions with subtle staggered composition.
@@ -1862,9 +2069,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function initReveal() {
     if (reduceMotion || !('IntersectionObserver' in window)) return;
 
-    // Exclude #capabilities so the continuous scroll-progress engine has 100% dedicated control
+    // Exclude #capabilities and #servicesTrackShell so dedicated scroll-progress engines operate cleanly
     const all = new Set(Array.from(document.querySelectorAll(REVEAL_SELECTOR))
-      .filter(el => !el.closest('#preloader, .navbar, .footer, #capabilities')));
+      .filter(el => !el.closest('#preloader, .navbar, .footer, #capabilities, #servicesTrackShell')));
     // Animate only the outermost match so nested items don't double-animate
     const targets = Array.from(all).filter(el => {
       for (let p = el.parentElement; p; p = p.parentElement) if (all.has(p)) return false;
@@ -1917,5 +2124,88 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ============================================================
+  // FAST LIGHTWEIGHT "CONTINUITY" PAGE TRANSITION SYSTEM
+  // ============================================================
+  (function initPageContinuity() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Check for incoming continuity state from same-origin navigation
+    if (!reduceMotion) {
+      try {
+        if (sessionStorage.getItem('ikx-continuity-nav') === '1') {
+          sessionStorage.removeItem('ikx-continuity-nav');
+          document.body.classList.add('is-page-entering');
+          setTimeout(() => {
+            document.body.classList.remove('is-page-entering');
+          }, 320);
+        }
+      } catch (_) {}
+    }
+
+    // BFCache and back/forward restore cleanup
+    window.addEventListener('pageshow', () => {
+      document.body.classList.remove('is-page-exiting');
+      document.body.classList.remove('is-page-entering');
+    });
+
+    // Intercept internal same-origin link clicks for fast 190ms exit hand-off
+    document.addEventListener('click', (e) => {
+      // Ignore modified or non-primary clicks
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        return;
+      }
+
+      const link = e.target.closest('a');
+      if (!link) return;
+
+      // Ignore downloads, target blank, protocols
+      if (link.hasAttribute('download')) return;
+      if (link.target && link.target !== '_self') return;
+
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+        return;
+      }
+
+      let targetUrl;
+      try {
+        targetUrl = new URL(link.href, window.location.href);
+      } catch (_) {
+        return;
+      }
+
+      // Internal same-origin only
+      if (targetUrl.origin !== window.location.origin) return;
+
+      // In-page anchor link (e.g. index.html#hero on home page) -> allow smooth anchor jump
+      if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) {
+        return;
+      }
+
+      if (reduceMotion) {
+        return;
+      }
+
+      e.preventDefault();
+
+      // Fast, lightweight 190ms exit hand-off
+      document.body.classList.add('is-page-exiting');
+      try {
+        sessionStorage.setItem('ikx-continuity-nav', '1');
+      } catch (_) {}
+
+      setTimeout(() => {
+        window.location.href = targetUrl.href;
+      }, 190);
+    });
+  })();
+
   initReveal();
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
